@@ -12,6 +12,55 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/locale/bootstrap-table-zh-CN.min.js"></script>
 
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            function cellFormatter(value, row, index) {
+                return {classes: row.status_class};
+            }
+
+            $('#status-table').bootstrapTable({
+                showRefresh: true,
+                clickToSelect: true,
+                locale: 'en-US',
+                search: true,
+                url: '/status',
+                columns: [
+                    {
+                        checkbox: true
+                    },
+                    {
+                        field: 'image_name',
+                        title: 'Image name',
+                        sortable: true,
+                        searchable: true,
+                        cellStyle: cellFormatter
+                    },
+                    {
+                        field: 'ecs_version',
+                        title: 'Cluster version',
+                        sortable: true,
+                        cellStyle: cellFormatter
+                    },
+                    {
+                        field: 'ecr_version',
+                        title: 'Repository version',
+                        sortable: true,
+                        cellStyle: cellFormatter
+                    },
+                    {
+                        field: 'status_text',
+                        title: 'Status',
+                        sortable: true,
+                        cellStyle: cellFormatter
+                    }
+                ]
+            });
+
+        });
+    </script>
+
 </head>
 
 <body>
@@ -23,39 +72,8 @@
                 <div class="columns columns-right btn-group pull-right">
                     <button class="btn btn-default" type="button" name="deploy" title="Deploy selected"><i class="glyphicon glyphicon-cloud-upload icon-list-alt"></i></button>
                 </div>
-
-                <!-- <div class="pull-right search">
-                    <input class="form-control" type="text" placeholder="Search">
-                </div> -->
             </div>
-            <table id="status-table" class="table" data-toggle="table">
-                <thead>
-                    <tr>
-                        <th data-checkbox="true"></th>
-                        <th data-searchable="true" data-sortable="true">Image name</th>
-                        <th data-sortable="true">Staging version</th>
-                        <th data-sortable="true">Repo version</th>
-                        <th data-sortable="true">Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for image_name, info in status.items() %}
-                        <tr class="{{ classes[info['result']] }}" data="asdasd">
-                            <td></td>
-                            <td>{{ image_name }}</td>
-                            <td>{{ info['ecs_version'] }}</td>
-                            <td>{{ info['ecr_version'] }}</td>
-                            <td>{{ texts[info['result']] }}</td>
-                            <td>
-                                <div class="pull-right search">
-                                    <button class="btn btn-default" type="button" name="deploy" title="Deploy"><i class="glyphicon glyphicon-cloud-upload icon-list-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <table id="status-table"></table>
         </div>
     </div>
 
