@@ -1,0 +1,6 @@
+class ImageStatuses(object):
+    UP_TO_DATE = 'UP_TO_DATE'
+    ONLY_IN_ECR = 'ONLY_IN_ECR'
+    GREATER_IN_ECR = 'GREATER_IN_ECR'
+    GREATER_IN_ECS = 'GREATER_IN_ECS'
+    ONLY_IN_ECS = 'ONLY_IN_ECS'

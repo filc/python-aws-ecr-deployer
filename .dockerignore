@@ -1,0 +1,9 @@
+.git
+.ve
+node_modules
+__pycache__
+tests/__pycache__
+*.pyc
+*.log
+README
+data/*.tar.gz

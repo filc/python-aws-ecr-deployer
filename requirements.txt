@@ -1,0 +1,13 @@
+Flask==0.10.1
+Flask-Babel==0.9
+Flask-Assets==0.10
+pytest==2.8.2
+pytest-cov==2.2.0
+requests==2.9.1
+mock==1.0.1
+hexconnector==0.1.1
+Beaker==1.7.0
+invoke==0.10.1
+pytz==2015.4
+boto3==1.2.5
+filcutils==0.1.0
