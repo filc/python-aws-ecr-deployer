@@ -43,14 +43,14 @@ docker run -ti --rm -p 5000:7000 -e DP_ECS_CLUSTER=example-cluster -e DP_ECR_REG
 
 ## Environment variables
 
-DP_ECS_CLUSTER (required) - name of the ecs cluster
-DP_ECR_REGISTRY (required) - id of the ecr registry
-DP_ECR_REGION (optional)
-DP_ECS_REGION (optional)
+* DP_ECS_CLUSTER (required) - name of the ecs cluster
+* DP_ECR_REGISTRY (required) - id of the ecr registry
+* DP_ECR_REGION (optional)
+* DP_ECS_REGION (optional)
 
 ### AWS specified environment variables
 
-AWS_ACCESS_KEY_ID - The access key for your AWS account.
-AWS_SECRET_ACCESS_KEY - The secret key for your AWS account.
-AWS_DEFAULT_REGION - The default region to use, e.g. us-east-1.
-AWS_PROFILE - The default credential and configuration profile to use, if any.
+* AWS_ACCESS_KEY_ID - The access key for your AWS account.
+* AWS_SECRET_ACCESS_KEY - The secret key for your AWS account.
+* AWS_DEFAULT_REGION - The default region to use, e.g. us-east-1.
+* AWS_PROFILE - The default credential and configuration profile to use, if any.
