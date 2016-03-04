@@ -2,7 +2,7 @@
 
 ## Installation / running
 
-To run the application, the aws credentials are needed to be set somehow. In local environment it can be done with [Absoliute this way link](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html). If it's run with docker, the aws environment variable must be set except for it's running on aws instances with the appropriate security settings.
+To run the application, the aws credentials are needed to be set somehow. In local environment it can be done with [this way](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html). If it's run with docker, the aws environment variable must be set except for it's running on aws instances with the appropriate security settings.
 
 ### Local / development
 
