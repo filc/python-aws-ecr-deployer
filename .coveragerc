@@ -1,0 +1,2 @@
+[run]
+omit = l4c/templates/*, l4c/static/*

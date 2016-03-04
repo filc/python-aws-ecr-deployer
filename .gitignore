@@ -43,7 +43,9 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
-.hypothesis/
+reports/
+pytests.xml
+coverage
 
 # Translations
 *.mo
@@ -57,6 +59,10 @@ docs/_build/
 
 # PyBuilder
 target/
-
-#Ipython Notebook
-.ipynb_checkpoints
+.ve
+bower_components
+node_modules
+data/filestore/
+.idea/
+l4c/static/.webassets-cache/
+*.DS_Store
