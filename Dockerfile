@@ -23,6 +23,7 @@ RUN pip3.5 install --upgrade -r requirements.txt
 
 ADD serve.py .coveragerc .dockerignore gunicorn.py ./
 
+ADD data data
 ADD config config
 ADD deployer deployer
 ADD tasks tasks
