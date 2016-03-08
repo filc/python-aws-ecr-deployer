@@ -1,0 +1,1017 @@
+globals:
+  task_count: 1
+  context:
+    LENSA_ROOT: "/srv"
+    LENSA_CONFIG: "/etc/lensa"
+    FILENAME_VIRTUOSO: "latest.unity3d"
+    SOVREN_ACCOUNT_ID: "28885036"
+    SOVREN_SERVICE_KEY: "FsGxMaIAoAwan2+MjxWIsIIA0JxkMetpW6vdZbkj"
+    DAXTRA_ACCOUNT: "lensa"
+    DAXTRA_CLIENT: "cvx-lensa.daxtra.com"
+    LENSA_LOG_RCPTS: "dev-sg@lensa.com"
+    LENSA_LOG_SMTP_HOST: "email-smtp.us-east-1.amazonaws.com"
+    LENSA_LOG_SMTP_PORT: "587"
+    LENSA_LOG_SMTP_SSL: 0
+    LENSA_LOG_SMTP_TLS: "1"
+    LENSA_LOG_SMTP_USER: "AKIAJJ6NIECCVC4WKHWA"
+    LENSA_LOG_SMTP_PWD: "Aj9sPyyAmBaBRxZMqfrdw46RB+7g9U16J+JUQVpCR5lZ"
+variables:
+  talent-pool-docker-path: &TP_DOCKER_PATH docker.pooledlabs.com/talent-pool
+  invisit-docker-path: &INVISIT_DOCKER_PATH docker.pooledlabs.com/invisit
+  jobrec-docker-path: &JOBREC_DOCKER_PATH 021601717932.dkr.ecr.us-east-1.amazonaws.com/sg/jobrec
+  talent-indexer-path: &TI_DOCKER_PATH docker.pooledlabs.com/talent-match
+  email-angler-path: &EA_DOCKER_PATH docker.pooledlabs.com/email-angler
+  sg-auth-docker-path: &SGAUTH_DOCKER_PATH 021601717932.dkr.ecr.us-east-1.amazonaws.com/sg/sg-auth
+  l4c-docker-path: &L4C_DOCKER_PATH docker.pooledlabs.com/l4c
+  ng-env: &NG_ENV ["LENSA_ENV", "LENSA_APP", "LENSA_CONFIG", "SERVICE_NAME", "LENSA_ROOT", "LENSA_FEATURES", "SERVICE_80_CHECK_HTTP", "SERVICE_80_CHECK_INTERVAL"]
+  ng-env-minimal: &NG_ENV_MINIMAL ["LENSA_ENV", "LENSA_APP", "LENSA_CONFIG", "SERVICE_NAME", "LENSA_ROOT", "LENSA_FEATURES", ]
+  ng-cmd: &NG_CMD ["/srv/start_service.sh"]
+  ng-docker-path: &NG_DOCKER_PATH docker.pooledlabs.com/ng
+  uwsgi-cmd: &UWSGI_CMD ["uwsgi", "--ini", "/srv/uwsgi.ini"]
+
+clusters:
+  lensa-staging:
+    task_count: 2
+    type: ecs
+    name: lensa-staging
+    region: us-east-1
+    context:
+      LENSA_BASE_URL: "https://pooledlabs.com/talent/"
+      LENSA_ENV: staging
+      LENSA_FEATURES: "minimal_team,careerpage"
+      LENSA_ES_ADDRESS: "l4e-elasticsearch-1.staging.lensa.internal:9200,l4e-elasticsearch-2.staging.lensa.internal:9200"
+      TURBINA_ES_ADDRESS: "l4e-elasticsearch-1.staging.lensa.internal:9200,l4e-elasticsearch-2.staging.lensa.internal:9200"
+      LMS_AUTOCOMPLETE_ES_NODES: |
+        [{"host": "l4e-elasticsearch-1.staging.lensa.internal", "port": "9200"},
+         {"host": "l4e-elasticsearch-2.staging.lensa.internal", "port": "9200"}]
+      ELASTICSEARCH_URL: "http://l4e-elasticsearch-1.staging.lensa.internal:9200"
+      LMS_NG_BACKEND_S3_ACCESS_KEY: AKIAIWTZSHYSCSUFOBGA
+      LMS_NG_BACKEND_S3_DEFAULT_BUCKET: lensa-pooled-staging-fs
+      LMS_NG_BACKEND_S3_SECRET_KEY: "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"
+      LMS_LOCAL_BACKEND_FS_PATH: "/tmp/local_filestore"
+      LMS_NG_BACKEND_S3_ENDPOINT: s3.amazonaws.com
+      LMS_FS_BACKEND: ng
+      LMS_NG_BACKEND_S3_PUBLIC_URL: "https://cdn-fs.pooledlabs.com"
+      LENSA_REDIS_HOST: "redis.pooled-staging.internal"
+      LENSA_MEMCACHED_URL: "memcached.pooled-staging.internal:11211"
+      LENSA_INVISIT_ADDRESS: "https://pooledlabs.com/invisit"
+      LENSA_SG_BACKEND_ADDRESS: "https://pooledlabs.com/sg/"
+      LENSA_JOB_RECOMMENDATION_ADDRESS: "https://pooledlabs.com/l4c/jobrec/"
+      FB_APP_ID: "1456541764647500"
+      FB_APP_SECRET: "68e8fb166fb84bc5f62950bfce2e598a"
+      SERVICE_80_CHECK_INTERVAL: "10s"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      WORDPRESS_DB_HOST: lensa-wp-db.c6acvs9pwue7.us-east-1.rds.amazonaws.com
+      WORDPRESS_DB_USER: lensa_wp_st
+      WORDPRESS_DB_PASSWORD: Woa1Wugh
+      WORDPRESS_DB_NAME: lensa_wp_st
+      WORDPRESS_TABLE_PREFIX: "wp_"
+      POOL_BACKUP_BUCKET: lensa-staging-pool-backup
+      BACKUP_BUCKET: lensa-staging-backup
+      ZOOKEEPER_ADDRESS: "10.33.1.26:2181,10.33.3.29:2181,10.33.0.201:2181"
+      CONSUL_PORT: "8500"
+      KAFKA_HOSTS: "10.33.1.26:9092,10.33.3.29:9092,10.33.0.201:9092"
+      KAFKA_BACKUP_TOPIC: "lensa-staging-backup"
+      MANDRILL_API_KEY: "QzCXCGMT9KU4Nhb-hwYVLw"
+      MANDRILL_SENDER_NAME: "Lensa for Candidates"
+      MANDRILL_SENDER_EMAIL: "noreply@lensa.com"
+      FB_APP_ID: "1456541764647500"
+      FB_APP_SECRET: "68e8fb166fb84bc5f62950bfce2e598a"
+      GOOGLE_APP_ID: "219164477516-vv8u9c5s47plfoqnmvg9vi67ob9o8v03.apps.googleusercontent.com"
+      GOOGLE_APP_SECRET: "tro-JubjkoGp2cbWaanBQRij"
+      LINKEDIN_APP_ID: "75rnrzwhebf3qx"
+      LINKEDIN_APP_SECRET: "X6XmgZk5DHwoh0Mf"
+      LENSA_LOG_ERROR_SUBJECT: "Error on staging"
+      LENSA_LOG_FROM: "staging@pooledlabs.com"
+      YAHOO_CLIENT_ID: "dj0yJmk9TDVHM1p1Q1lTVTZXJmQ9WVdrOWVEazVZV2Q2TTJVbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD1hNg--"
+      YAHOO_SECRET: "6de1f9a868eb90a5c51cf8e48dae4954d33c60d0"
+      TALENTINC_PARTNER_KEY: "2Hjr6OKQAO5mv"
+      TALENTINC_SECRET_KEY: "wdq12Uj12XXZF4qH9fKQyaXmVNWISidov"
+      MSLIVE_CLIENT_ID: "0000000040171FEC"
+      MSLIVE_SECRET: "yX4Dv3BGsxYf4zHitd3gqHshFZKvQVM5"
+      GOOGLE_MAPS_KEY: "AIzaSyCIh52KeDAUW1iNvPpsarupxyVf3e4UuwA"
+      ZIP_ALERT_API_KEY: "fqrnydza53qphnuczr3m7betpf7tkrfw"
+      LENSA_BASE_AUTH_URL: "https://pooledlabs.com/l4c/auth/"
+      LENSA_SGAUTH_SECRET_KEY: "0URultr45EcuR35ecR3TK3y"
+
+  lensa-production:
+    task_count: 2
+    type: ecs
+    name: lensa-production
+    region: us-east-1
+    context:
+      LENSA_BASE_URL: "https://lensa.com/talent/"
+      LENSA_ENV: production
+      LENSA_FEATURES: ats
+      LENSA_ES_ADDRESS: "http://l4c-elasticsearch-1.production.lensa.internal:9200"
+      LMS_AUTOCOMPLETE_ES_NODES: |
+        [{"host": "l4e-elasticsearch-1.production.lensa.internal", "port": "9200"},
+         {"host": "l4e-elasticsearch-2.production.lensa.internal", "port": "9200"}]
+      ELASTICSEARCH_URL: "http://l4c-elasticsearch-1.production.lensa.internal:9200"
+      LENSA_REDIS_HOST: "l4c-redis.production.lensa.internal"
+      LENSA_MEMCACHED_URL: "l4c-memcached.production.lensa.internal:11211"
+      LMS_NG_BACKEND_S3_ACCESS_KEY: "AKIAJNDRP3JWMSXDZBUA"
+      LMS_NG_BACKEND_S3_DEFAULT_BUCKET: lensa-production-fs
+      LMS_NG_BACKEND_S3_SECRET_KEY: "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"
+      LMS_LOCAL_BACKEND_FS_PATH: "/tmp/local_filestore"
+      LMS_NG_BACKEND_S3_ENDPOINT: s3.amazonaws.com
+      LMS_FS_BACKEND: ng
+      LMS_NG_BACKEND_S3_PUBLIC_URL: "https://cdnfs.lensa.com"
+      MANDRILL_API_KEY: "qhbD14rlRPlaekzCzqCqDg"
+      MANDRILL_SENDER_NAME: "Lensa for Candidates"
+      MANDRILL_SENDER_EMAIL: "noreply@lensa.com"
+      LENSA_INVISIT_ADDRESS: "https://lensa.com/invisit"
+      LENSA_SG_BACKEND_ADDRESS: "https://lensa.com/sg/"
+      LENSA_JOB_RECOMMENDATION_ADDRESS: "https://lensa.com/l4c/jobrec/"
+      FB_APP_ID: "469453333259281"
+      FB_APP_SECRET: "b2111e900c100d2424b4a216aa161ea7"
+      GOOGLE_APP_ID: "637494028219-sorfc7bvelncleuqumvsojgsudccd1g0.apps.googleusercontent.com"
+      GOOGLE_APP_SECRET: "qKCsjFAT8In1LVQSt_11wnJy"
+      LINKEDIN_APP_ID: "77qdwjuxuycc4z"
+      LINKEDIN_APP_SECRET: "VTW93ceuriwGem95"
+      WORDPRESS_DB_HOST: lensa-wp-db.c6acvs9pwue7.us-east-1.rds.amazonaws.com
+      WORDPRESS_DB_USER: lensa_wp
+      WORDPRESS_DB_PASSWORD: otahL5ee
+      WORDPRESS_DB_NAME: lensa_wp_db
+      WORDPRESS_TABLE_PREFIX: "wp_"
+      POOL_BACKUP_BUCKET: lensa-production-pool-backup
+      BACKUP_BUCKET: lensa-production-backup
+      ZOOKEEPER_ADDRESS: "10.0.10.124:2181,10.0.10.187:2181,10.0.10.208:2181/kafka"
+      CONSUL_PORT: "8500"
+      SERVICE_80_CHECK_INTERVAL: "10s"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      POOL_BACKUP_BUCKET: lensa-production-pool-backup
+      KAFKA_HOSTS: "10.0.10.115:31990,10.0.10.171:31990,10.0.10.214:31990"
+      KAFKA_BACKUP_TOPIC: "lensa-production-backup"
+      LENSA_LOG_ERROR_SUBJECT: "Error on production"
+      LENSA_LOG_FROM: "production@lensa.com"
+      YAHOO_CLIENT_ID: "dj0yJmk9Zk5jU004emY2WVhtJmQ9WVdrOVIyWjFWREJwTm0wbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD04Zg--"
+      YAHOO_SECRET: "82ff186f117325a2e1a369a9e9f2b6e6438d96c5"
+      TALENTINC_PARTNER_KEY: "Wb4j0wVhNM7gz"
+      TALENTINC_SECRET_KEY: "Eu7GmTd4a30yA34MVVI607vVphHwyf92"
+      MSLIVE_CLIENT_ID: "000000004416A9E2"
+      MSLIVE_SECRET: "qxCCE54BcGm5pbbOHTIDr61OGkQBHFWq"
+      GOOGLE_MAPS_KEY: "AIzaSyDz9iHXD52Y7XPN7KE1R-63cb_BtxGLK3I"
+      ZIP_ALERT_API_KEY: "7x7nykmzpzjz2r3xhh6fekc5nw6hrust"
+      LENSA_BASE_AUTH_URL: "https://lensa.com/l4c/auth/"
+      LENSA_SGAUTH_SECRET_KEY: "INK8cVBx896zyyrq8jxj8n6McXL7XQWo"
+
+  lensa-status:
+    task_count: 1
+    type: ecs
+    name: lensa-production
+    region: us-east-1
+    context:
+      LENSA_DASHBOARD_URL: http://status.lensa.com
+
+services:
+  status-dashboard:
+    task_count: 1
+    containers:
+      - image_path: docker.pooledlabs.com/status-dashboard
+        command: []
+        env: ["LENSA_DASHBOARD_URL"]
+        memory: 300
+        cpu: 512
+        ports: ["8989:8989", "8080:8080"]
+
+  sg-nginx:
+    task_count: 3
+    context:
+      LENSA_APP: sg-nginx
+      SERVICE_80_CHECK_HTTP: "/talent/ping/"
+    containers:
+      - image_path: docker.pooledlabs.com/sg-nginx
+        command: ["/srv/start_service.sh"]
+        env: ["LENSA_ENV", "LENSA_APP", "LENSA_CONFIG", "LENSA_ROOT"]
+        memory: 400
+        cpu: 128
+        ports: ["80:80"]
+
+  career-frontend:
+    task_count: 2
+    context:
+      APP_PORT: "7000"
+    containers:
+      - image_path: 021601717932.dkr.ecr.us-east-1.amazonaws.com/sg/career-frontend
+        command: ["/srv/start.sh"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_ROOT"
+          - "APP_PORT"
+        memory: 400
+        cpu: 128
+        ports: ["7000"]
+  career-backend:
+    task_count: 2
+    containers:
+      - image_path: 021601717932.dkr.ecr.us-east-1.amazonaws.com/sg/career-backend
+        command: []
+        env:
+          - "LENSA_ENV"
+        memory: 250
+        cpu: 128
+        ports: ["8888"]
+
+  application_history:
+    task_count: 2
+    containers:
+      - image_path: 021601717932.dkr.ecr.us-east-1.amazonaws.com/sg/application_history
+        command: []
+        env:
+          - "LENSA_ENV"
+        memory: 250
+        cpu: 128
+        ports: ["8888"]
+
+
+  sg-backend:
+    context:
+      LENSA_APP: sg-backend
+      SERVICE_7000_CHECK_HTTP: "/sg/ping"
+      KAFKA_TOPIC: lensa-game-data
+    containers:
+      - image_path: docker.pooledlabs.com/sg-backend
+        command: ["gunicorn", "-c", "/srv/gunicorn.py", "serve_sg_backend:app"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "LENSA_ROOT"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+          - "LENSA_REDIS_HOST"
+          - "KAFKA_HOSTS"
+          - "KAFKA_TOPIC"
+          - "BACKUP_BUCKET"
+        memory: 750
+        cpu: 128
+        ports: ["7000"]
+  sg-backend-backup:
+    task_count: 1
+    context:
+      KAFKA_TOPIC: lensa-game-data
+      LENSA_APP: sg-backend-backup
+    containers:
+      - image_path: docker.pooledlabs.com/sg-backend
+        command: ["python3", "/srv/backup_game_data_to_s3.py"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "LENSA_ROOT"
+          - "LENSA_REDIS_HOST"
+          - "KAFKA_HOSTS"
+          - "KAFKA_TOPIC"
+          - "BACKUP_BUCKET"
+        memory: 100
+        cpu: 64
+        ports: []
+  backup-to:
+    task_count: 1
+    context:
+      LENSA_APP: lensa-backup
+    containers:
+      - image_path: docker.pooledlabs.com/backup-to
+        command: []
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "KAFKA_HOSTS"
+          - "KAFKA_BACKUP_TOPIC"
+          - "BACKUP_BUCKET"
+        memory: 200
+        cpu: 64
+        ports: []
+  turbina:
+    context:
+      LENSA_APP: "turbina"
+      SERVICE_NAME: "turbina"
+      TURBINA_URL_PREFIX: "/jobs"
+      SERVICE_7000_CHECK_HTTP: "/jobs/ping/"
+    containers:
+      - image_path: docker.pooledlabs.com/turbina
+        command: []
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "TURBINA_URL_PREFIX"
+          - "TURBINA_ES_ADDRESS"
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+        memory: 200
+        cpu: 64
+        ports: ["7000"]
+
+  l4c:
+    task_count: 2
+    context:
+      LENSA_APP: l4c
+      SERVICE_7000_CHECK_HTTP: "/talent/ping/"
+    containers:
+      - image_path: *L4C_DOCKER_PATH
+        command: ["/srv/start_l4c.sh"]
+        env:
+          - "LENSA_BASE_URL"
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "LENSA_ROOT"
+          - "FILENAME_VIRTUOSO"
+          - "FB_APP_ID"
+          - "FB_APP_SECRET"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+          - "LENSA_INVISIT_ADDRESS"
+          - "LENSA_SG_BACKEND_ADDRESS"
+          - "LENSA_JOB_RECOMMENDATION_ADDRESS"
+          - "LENSA_MEMCACHED_URL"
+          - "LENSA_REDIS_HOST"
+          - "MANDRILL_API_KEY"
+          - "MANDRILL_SENDER_NAME"
+          - "MANDRILL_SENDER_EMAIL"
+          - "FB_APP_ID"
+          - "FB_APP_SECRET"
+          - "GOOGLE_APP_ID"
+          - "GOOGLE_APP_SECRET"
+          - "LINKEDIN_APP_ID"
+          - "LINKEDIN_APP_SECRET"
+          - "YAHOO_CLIENT_ID"
+          - "YAHOO_SECRET"
+          - "TALENTINC_PARTNER_KEY"
+          - "TALENTINC_SECRET_KEY"
+          - "MSLIVE_CLIENT_ID"
+          - "MSLIVE_SECRET"
+          - "GOOGLE_MAPS_KEY"
+          - "LENSA_SGAUTH_SECRET_KEY"
+          - "LENSA_BASE_AUTH_URL"
+        memory: 400
+        cpu: 64
+        ports: ["7000"]
+  l4cworker:
+    context:
+      LENSA_APP: rqworker
+    containers:
+      - image_path: *L4C_DOCKER_PATH
+        command: ["/srv/start_l4c.sh"]
+        env:
+          - "LENSA_BASE_URL"
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "LENSA_ROOT"
+          - "FILENAME_VIRTUOSO"
+          - "FB_APP_ID"
+          - "FB_APP_SECRET"
+          - "LENSA_INVISIT_ADDRESS"
+          - "LENSA_SG_BACKEND_ADDRESS"
+          - "LENSA_JOB_RECOMMENDATION_ADDRESS"
+          - "LENSA_MEMCACHED_URL"
+          - "LENSA_REDIS_HOST"
+          - "MANDRILL_API_KEY"
+          - "MANDRILL_SENDER_NAME"
+          - "MANDRILL_SENDER_EMAIL"
+          - "FB_APP_ID"
+          - "FB_APP_SECRET"
+          - "GOOGLE_APP_ID"
+          - "GOOGLE_APP_SECRET"
+          - "LINKEDIN_APP_ID"
+          - "LINKEDIN_APP_SECRET"
+          - "YAHOO_CLIENT_ID"
+          - "YAHOO_SECRET"
+          - "TALENTINC_PARTNER_KEY"
+          - "TALENTINC_SECRET_KEY"
+          - "MSLIVE_CLIENT_ID"
+          - "MSLIVE_SECRET"
+          - "LENSA_SGAUTH_SECRET_KEY"
+          - "LENSA_BASE_AUTH_URL"
+        memory: 200
+        cpu: 64
+        ports: []
+  l4cscheduler:
+    task_count: 1
+    context:
+      LENSA_APP: rqscheduler
+    containers:
+      - image_path: *L4C_DOCKER_PATH
+        command: ["/srv/start_l4c.sh"]
+        env:
+          - "LENSA_BASE_URL"
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "LENSA_ROOT"
+          - "FILENAME_VIRTUOSO"
+          - "FB_APP_ID"
+          - "FB_APP_SECRET"
+          - "LENSA_INVISIT_ADDRESS"
+          - "LENSA_SG_BACKEND_ADDRESS"
+          - "LENSA_JOB_RECOMMENDATION_ADDRESS"
+          - "LENSA_MEMCACHED_URL"
+          - "LENSA_REDIS_HOST"
+          - "MANDRILL_API_KEY"
+          - "MANDRILL_SENDER_NAME"
+          - "MANDRILL_SENDER_EMAIL"
+          - "FB_APP_ID"
+          - "FB_APP_SECRET"
+          - "GOOGLE_APP_ID"
+          - "GOOGLE_APP_SECRET"
+          - "LINKEDIN_APP_ID"
+          - "LINKEDIN_APP_SECRET"
+          - "YAHOO_CLIENT_ID"
+          - "YAHOO_SECRET"
+          - "TALENTINC_PARTNER_KEY"
+          - "TALENTINC_SECRET_KEY"
+          - "MSLIVE_CLIENT_ID"
+          - "MSLIVE_SECRET"
+          - "GOOGLE_MAPS_KEY"
+          - "LENSA_SGAUTH_SECRET_KEY"
+          - "LENSA_BASE_AUTH_URL"
+        memory: 200
+        cpu: 64
+        ports: []
+
+  sg-auth:
+    task_count: 2
+    context:
+      LENSA_APP: sg-auth
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+    containers:
+      - image_path: *SGAUTH_DOCKER_PATH
+        command: ["/srv/start.sh"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_ROOT"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+          - "MANDRILL_API_KEY"
+          - "MANDRILL_SENDER_NAME"
+          - "MANDRILL_SENDER_EMAIL"
+          - "FB_APP_ID"
+          - "FB_APP_SECRET"
+          - "GOOGLE_APP_ID"
+          - "GOOGLE_APP_SECRET"
+          - "LINKEDIN_APP_ID"
+          - "LINKEDIN_APP_SECRET"
+          - "LENSA_LOG_RCPTS"
+          - "LENSA_LOG_SMTP_HOST"
+          - "LENSA_LOG_SMTP_PORT"
+          - "LENSA_LOG_SMTP_TLS"
+          - "LENSA_LOG_SMTP_USER"
+          - "LENSA_LOG_SMTP_PWD"
+          - "LENSA_LOG_ERROR_SUBJECT"
+          - "LENSA_LOG_FROM"
+          - "CONSUL_PORT"
+          - "LENSA_SGAUTH_SECRET_KEY"
+          - "LENSA_BASE_AUTH_URL"
+        memory: 200
+        cpu: 64
+        ports: ["7000"]
+
+  pdfexport:
+    task_count: 2
+    context:
+      LENSA_APP: pdfexport
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+    containers:
+      - image_path: docker.pooledlabs.com/pdfexport
+        command: ["/srv/start.sh"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_ROOT"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+          - "LENSA_LOG_RCPTS"
+          - "LENSA_LOG_SMTP_HOST"
+          - "LENSA_LOG_SMTP_PORT"
+          - "LENSA_LOG_SMTP_TLS"
+          - "LENSA_LOG_SMTP_USER"
+          - "LENSA_LOG_SMTP_PWD"
+          - "LENSA_LOG_ERROR_SUBJECT"
+          - "LENSA_LOG_FROM"
+        memory: 250
+        cpu: 64
+        ports: ["7000"]
+
+  email-mandrill:
+    task_count: 2
+    context:
+      LENSA_APP: email-mandrill
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+    containers:
+      - image_path: 021601717932.dkr.ecr.us-east-1.amazonaws.com/sg/email-mandrill
+        command: ["/srv/start.sh"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_ROOT"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+          - "MANDRILL_API_KEY"
+          - "MANDRILL_SENDER_NAME"
+          - "MANDRILL_SENDER_EMAIL"
+          - "LENSA_LOG_RCPTS"
+          - "LENSA_LOG_SMTP_HOST"
+          - "LENSA_LOG_SMTP_PORT"
+          - "LENSA_LOG_SMTP_TLS"
+          - "LENSA_LOG_SMTP_USER"
+          - "LENSA_LOG_SMTP_PWD"
+          - "LENSA_LOG_ERROR_SUBJECT"
+          - "LENSA_LOG_FROM"
+          - "CONSUL_PORT"
+        memory: 200
+        cpu: 64
+        ports: ["7000"]
+
+  talent-pool:
+    task_count: 2
+    context:
+      LENSA_APP: talent-pool
+      KAFKA_TOPIC: lensa-candidate-updated
+      KAFKA_REINDEX_TOPIC: lensa-candidate-rebuild
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+    containers:
+      - image_path: *TP_DOCKER_PATH
+        command: ["gunicorn", "--log-file=-", "-c", "/srv/gunicorn.py", "serve_talentpool:app"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "LENSA_ROOT"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+          - "KAFKA_HOSTS"
+          - "KAFKA_TOPIC"
+          - "POOL_BACKUP_BUCKET"
+        memory: 400
+        cpu: 64
+        ports: ["7000"]
+
+  talent-pool-backup:
+    task_count: 1
+    context:
+      LENSA_APP: talent-pool-backup
+      KAFKA_TOPIC: lensa-candidate-updated
+    containers:
+      - image_path: *TP_DOCKER_PATH
+        command: ["python3", "/srv/backup_talentpool_to_s3.py"]
+        env: ["LENSA_ENV", "LENSA_APP", "LENSA_CONFIG", "LENSA_ROOT", "KAFKA_HOSTS", "KAFKA_TOPIC", "POOL_BACKUP_BUCKET"]
+        memory: 100
+        cpu: 64
+        ports: []
+
+  invisit:
+    context:
+      LENSA_APP: invisit
+      SERVICE_7000_CHECK_HTTP: "/invisit/ping/"
+    containers:
+      - image_path: *INVISIT_DOCKER_PATH
+        command: ["gunicorn", "-c", "/srv/gunicorn.py", "serve_invisit:app"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "LENSA_ROOT"
+          - "LENSA_ES_ADDRESS"
+          - "LENSA_REDIS_HOST"
+          - "KAFKA_HOSTS"
+          - "KAFKA_BACKUP_TOPIC"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+        memory: 200
+        cpu: 64
+        ports: ["7000"]
+
+  jobrec:
+    context:
+      LENSA_APP: jobrec
+      SERVICE_7000_CHECK_HTTP: "/l4c/jobrec/ping/"
+    containers:
+      - image_path: *JOBREC_DOCKER_PATH
+        command: ["gunicorn", "--log-file=-", "-c", "/srv/gunicorn.py", "serve_jobrec:app"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "LENSA_ROOT"
+          - "LENSA_ES_ADDRESS"
+          - "LENSA_REDIS_HOST"
+          - "KAFKA_HOSTS"
+          - "KAFKA_BACKUP_TOPIC"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+        memory: 250
+        cpu: 32
+        ports: ["7000"]
+
+  talent-indexer:
+    context:
+      KAFKA_TOPIC: "lensa-candidate-updated,lensa-candidate-rebuild"
+    containers:
+      - image_path: *TI_DOCKER_PATH
+        command: ["/srv/start_indexer.sh"]
+        env: ["LENSA_ENV", "LENSA_ROOT", "LENSA_ES_ADDRESS", "KAFKA_TOPIC", "ZOOKEEPER_ADDRESS", "CONSUL_PORT", "LENSA_LOG_FROM"]
+        memory: 200
+        cpu: 32
+        ports: []
+
+  talent-matcher:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_NAME: "talent-matcher"
+    containers:
+      - image_path: *TI_DOCKER_PATH
+        command: ["node", "matcher.js"]
+        env: ["LENSA_ENV", "LENSA_ROOT", "LENSA_ES_ADDRESS", "SERVICE_7000_CHECK_HTTP", "SERVICE_7000_CHECK_INTERVAL", "SERVICE_NAME", "LENSA_LOG_FROM"]
+        memory: 250
+        cpu: 32
+        ports: ["7000"]
+
+  email-angler:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_NAME: "email-angler"
+    containers:
+      - image_path: *EA_DOCKER_PATH
+        command: ["npm", "start"]
+        env: ["LENSA_ENV", "LENSA_ROOT", "SERVICE_7000_CHECK_HTTP", "SERVICE_7000_CHECK_INTERVAL", "SERVICE_NAME", "LENSA_LOG_RCPTS", "LENSA_LOG_SMTP_HOST", "LENSA_LOG_SMTP_PORT", "LENSA_LOG_SMTP_TLS", "LENSA_LOG_SMTP_USER", "LENSA_LOG_SMTP_PWD", "LENSA_LOG_ERROR_SUBJECT", "LENSA_LOG_FROM", "ZIP_ALERT_API_KEY"]
+        memory: 250
+        cpu: 32
+        ports: ["7000"]
+
+  lms-autocomplete:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-autocomplete"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-autocomplete
+        command: *UWSGI_CMD
+        cpu: 16
+        memory: 50
+        ports: ["7000"]
+        env:
+          - "LMS_AUTOCOMPLETE_ES_NODES"
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-emailsplit:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-emailsplit"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-emailsplit
+        command: *UWSGI_CMD
+        cpu: 32
+        memory: 200
+        ports: ["7000"]
+        env:
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-facedetect:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-facedetect"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-facedetect
+        command: *UWSGI_CMD
+        cpu: 32
+        memory: 500
+        ports: ["7000"]
+        env:
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-fs:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-fs"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-fs
+        command: *UWSGI_CMD
+        cpu: 64
+        memory: 300
+        ports: ["7000"]
+        env:
+          - "LMS_NG_BACKEND_S3_ACCESS_KEY"
+          - "LMS_NG_BACKEND_S3_DEFAULT_BUCKET"
+          - "LMS_NG_BACKEND_S3_SECRET_KEY"
+          - "LMS_LOCAL_BACKEND_FS_PATH"
+          - "LMS_NG_BACKEND_S3_ENDPOINT"
+          - "LMS_FS_BACKEND"
+          - "LMS_NG_BACKEND_S3_PUBLIC_URL"
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-invoice-pdf:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-invoice-pdf"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-invoice-pdf
+        command: ["gunicorn", "-c", "/srv/gunicorn.py", "serve_invoice_pdf:app"]
+        cpu: 32
+        memory: 100
+        ports: ["7000"]
+        env:
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-mimedetect:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-mimedetect"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-mimedetect
+        command: *UWSGI_CMD
+        cpu: 32
+        memory: 100
+        ports: ["7000"]
+        env:
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-pdftohtml:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-pdftohtml"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-pdftohtml
+        command: *UWSGI_CMD
+        cpu: 32
+        memory: 500
+        ports: ["7000"]
+        env:
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-secretkeeper:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-secretkeeper"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-secretkeeper
+        command: *UWSGI_CMD
+        cpu: 32
+        memory: 300
+        ports: ["7000"]
+        env:
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-sovren:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-sovren"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-sovren
+        command: *UWSGI_CMD
+        cpu: 32
+        memory: 250
+        ports: ["7000"]
+        env:
+          - "SOVREN_ACCOUNT_ID"
+          - "SOVREN_SERVICE_KEY"
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-daxtra:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-daxtra"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-daxtra
+        command: *UWSGI_CMD
+        cpu: 32
+        memory: 250
+        ports: ["7000"]
+        env:
+          - "DAXTRA_ACCOUNT"
+          - "DAXTRA_CLIENT"
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-textextract:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-textextract"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-textextract
+        command: ["supervisord"]
+        cpu: 32
+        memory: 300
+        ports: ["7000"]
+        env:
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  lms-xtopdf:
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping/"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "lms-xtopdf"
+    containers:
+      - image_path: docker.pooledlabs.com/lms-xtopdf
+        command: ["uwsgi", "--ini", "/srv/uwsgi.ini"]
+        cpu: 32
+        memory: 500
+        ports: ["7000"]
+        env:
+          - "SERVICE_NAME"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+
+
+  kibana:
+    task_count: 1
+    containers:
+      - image_path: "kibana"
+        command: []
+        cpu: 32
+        memory: 500
+        ports: ["5601:5601"]
+        env: ["ELASTICSEARCH_URL"]
+
+  # ez az nginx-es hack-kel lett megoldva sporolas miatt a careerpage-es container-ben!!
+  ng-admin:
+    context:
+      LENSA_APP: admin
+      SERVICE_NAME: "ng-admin"
+      SERVICE_7000_CHECK_HTTP: "/ping"
+      SERVICE_7000_CHECK_INTERVAL: "10s"
+    containers:
+      - image_path: docker.pooledlabs.com/ng-admin
+        command: ["/srv/start_service.sh"]
+        cpu: 32
+        memory: 150
+        ports: ["7000"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "SERVICE_NAME"
+          - "LENSA_ROOT"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+  ng-api:
+    context:
+       LENSA_APP: api
+       SERVICE_5002_CHECK_HTTP: "/api/v1/ping"
+       SERVICE_5002_CHECK_INTERVAL: "10s"
+       SERVICE_NAME: "ng-api"
+    containers:
+      - image_path: *NG_DOCKER_PATH
+        command: *NG_CMD
+        memory: 100
+        cpu: 32
+        ports: ["5002"]
+        env:
+          - "LENSA_ENV"
+          - "LENSA_APP"
+          - "LENSA_CONFIG"
+          - "LENSA_FEATURES"
+          - "SERVICE_NAME"
+          - "LENSA_ROOT"
+          - "SERVICE_5002_CHECK_HTTP"
+          - "SERVICE_5002_CHECK_INTERVAL"
+  ng-ats:
+    context:
+      LENSA_APP: ats
+      SERVICE_80_CHECK_HTTP: "/ping"
+      SERVICE_80_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "ng-ats"
+    containers:
+      - image_path: *NG_DOCKER_PATH
+        command: *NG_CMD
+        env: *NG_ENV
+        memory: 400
+        cpu: 32
+        ports: ["80"]
+  ng-career:
+    context:
+      LENSA_APP: careerpage
+      SERVICE_80_CHECK_HTTP: "/"
+      SERVICE_80_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: "ng-career"
+    containers:
+      - image_path: *NG_DOCKER_PATH
+        command: *NG_CMD
+        env: *NG_ENV
+        memory: 300
+        cpu: 32
+        ports: ["8080:8080"]
+  ng-rqscheduler:
+    task_count: 1
+    context:
+      LENSA_APP: rqscheduler
+      SERVICE_NAME: "ng-rqscheduler"
+    containers:
+      - image_path: *NG_DOCKER_PATH
+        command: *NG_CMD
+        env: *NG_ENV_MINIMAL
+        memory: 150
+        cpu: 32
+        ports: []
+  ng-rqworker:
+    context:
+      LENSA_APP: rqworker
+      SERVICE_NAME: "ng-rqworker"
+    containers:
+      - image_path: *NG_DOCKER_PATH
+        command: *NG_CMD
+        env: *NG_ENV_MINIMAL
+        memory: 400
+        cpu: 32
+        ports: []
+
+  wordpress:
+    task_count: 2
+    context:
+      SERVICE_80_CHECK_HTTP: "/"
+      SERVICE_80_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: wordpress
+    containers:
+      - image_path: docker.pooledlabs.com/lensa-wordpress
+        command: []
+        env: ["SERVICE_80_CHECK_HTTP", "SERVICE_80_CHECK_INTERVAL", "SERVICE_NAME", "WORDPRESS_DB_HOST", "WORDPRESS_DB_USER", "WORDPRESS_DB_PASSWORD", "WORDPRESS_DB_NAME", "WORDPRESS_TABLE_PREFIX"]
+        memory: 400
+        cpu: 20
+        ports: [":80"]
+
+  wordpress-admin:
+    task_count: 1
+    context:
+      SERVICE_80_CHECK_HTTP: "/"
+      SERVICE_80_CHECK_INTERVAL: "10s"
+      SERVICE_NAME: wordpress-admin
+    containers:
+      - image_path: docker.pooledlabs.com/lensa-wordpress
+        command: []
+        env: ["SERVICE_80_CHECK_HTTP", "SERVICE_80_CHECK_INTERVAL", "SERVICE_NAME", "WORDPRESS_DB_HOST", "WORDPRESS_DB_USER", "WORDPRESS_DB_PASSWORD", "WORDPRESS_DB_NAME", "WORDPRESS_TABLE_PREFIX"]
+        memory: 400
+        cpu: 20
+        ports: [":80"]
+
+  google-analytics-stats:
+    task_count: 1
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping"
+    containers:
+      - image_path: docker.pooledlabs.com/google-analytics-stats
+        command: []
+        env:
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+        memory: 400
+        cpu: 32
+        ports: ["7000"]
+
+  lensa-ui-kit:
+    task_count: 2
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping"
+      SERVICE_NAME: lensa-ui-kit
+    containers:
+      - image_path: 021601717932.dkr.ecr.us-east-1.amazonaws.com/sg/lensa-ui-kit
+        command: []
+        env:
+          - "LENSA_ENV"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+          - "SERVICE_NAME"
+        memory: 256
+        cpu: 32
+        ports: ["7000"]
+
+  email-invite:
+    task_count: 2
+    context:
+      SERVICE_7000_CHECK_HTTP: "/ping"
+      SERVICE_NAME: email-invite
+    containers:
+      - image_path: 021601717932.dkr.ecr.us-east-1.amazonaws.com/sg/email-invite
+        command: []
+        env:
+          - "LENSA_ENV"
+          - "SERVICE_7000_CHECK_HTTP"
+          - "SERVICE_7000_CHECK_INTERVAL"
+          - "SERVICE_NAME"
+          - "MANDRILL_SENDER_NAME"
+          - "MANDRILL_SENDER_EMAIL"
+        memory: 256
+        cpu: 32
+        ports: ["7000"]
