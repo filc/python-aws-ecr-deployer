@@ -12,9 +12,13 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/locale/bootstrap-table-zh-CN.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/0.11.0/fetch.min.js"></script>
+
     <script type="text/javascript">
 
         $(document).ready(function() {
+
+            var imagesToDeploy = {};
 
             function cellFormatter(value, row, index) {
                 return {classes: row.status_class};
@@ -58,6 +62,49 @@
                 ]
             });
 
+            $('#status-table').on('check.bs.table', function ($element, row) {
+                imagesToDeploy[row.image_name] = row.ecr_version;
+            });
+
+            $('#status-table').on('uncheck.bs.table', function ($element, row) {
+                delete imagesToDeploy[row.image_name]
+            });
+
+            $('#status-table').on('check-all.bs.table', function ($element, rows) {
+                for (var i in rows) {
+                    imagesToDeploy[rows[i].image_name] = rows[i].ecr_version;
+                }
+            });
+
+            $('#status-table').on('uncheck-all.bs.table', function ($element, rows) {
+                imagesToDeploy = {};
+            });
+
+            $('#btnDeploy').click(function(e){
+                fetch('/deploy', {
+                    method: 'post',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(imagesToDeploy)
+                })
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(json) {
+                    $('#result-modal').modal('show')
+                    $('#result-modal').on('shown.bs.modal', function (e) {
+                        var modalBody = $('#result-modal .modal-body');
+
+                        for (var i in json) {
+                            modalBody.append($('<h2>').html(json[i]['service']));
+                            modalBody.append($('<pre>').html(json[i]['result']));
+                        }
+                    });
+                });
+            });
+
         });
     </script>
 
@@ -70,12 +117,28 @@
         <div class="bootstrap-table">
             <div class="fixed-table-toolbar">
                 <div class="columns columns-right btn-group pull-right">
-                    <button class="btn btn-default" type="button" name="deploy" title="Deploy selected"><i class="glyphicon glyphicon-cloud-upload icon-list-alt"></i></button>
+                    <button id="btnDeploy" class="btn btn-default" type="button" name="deploy" title="Deploy selected"><i class="glyphicon glyphicon-cloud-upload icon-list-alt"></i></button>
                 </div>
             </div>
             <table id="status-table"></table>
         </div>
     </div>
+
+    <div id="result-modal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Deployment result</h4>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
 </body>
 </html>
