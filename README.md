@@ -43,6 +43,7 @@ docker run -ti --rm -p 5000:7000 -e DP_ECS_CLUSTER=example-cluster -e DP_ECR_REG
 
 ## Environment variables
 
+* DP_BASE_URL (optional) - base url of the application like "http://example.com/deployer"
 * DP_APP_ROOT (optional) - root dir of the application
 * DP_ECS_CLUSTER (required) - name of the ecs cluster
 * DP_ECR_REGISTRY (required) - id of the ecr registry
