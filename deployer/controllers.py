@@ -17,7 +17,7 @@ def _return_json(fn):
 
 @bp.route("/", methods=['GET'])
 def index():
-    return render_template('index.html')
+    return render_template('index.html', base_url=g.cn.g_('app_config').get('base_url'))
 
 
 @bp.route("/status", methods=['GET'])

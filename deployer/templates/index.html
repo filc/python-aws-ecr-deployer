@@ -30,7 +30,7 @@
                 clickToSelect: true,
                 locale: 'en-US',
                 search: true,
-                url: '/status',
+                url: '{{ base_url }}/status',
                 columns: [
                     {
                         checkbox: true
@@ -102,7 +102,7 @@
             $('#btnDeploy').click(function(e){
                 $(e).prop('disabled', true);
 
-                fetch('/deploy', {
+                fetch('{{ base_url }}/deploy', {
                     method: 'post',
                     headers: {
                         'Accept': 'application/json',

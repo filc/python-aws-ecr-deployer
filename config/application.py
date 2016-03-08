@@ -1,5 +1,6 @@
 import os
 
+base_url = os.environ.get('DP_BASE_URL', '')
 base_dir = os.environ.get('DP_APP_ROOT', os.path.dirname(os.path.realpath(__file__)) + '/..')
 
 adapters = {
