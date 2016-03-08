@@ -71,3 +71,17 @@ def test_get_current_images_on_ecs(fake_ecs_client):
         'first_image': (23, 'service_name'),
         'second_image': (23, 'service_name')
     }
+
+
+def test_get_s3_file(monkeypatch):
+    fake_body = mock.MagicMock()
+    fake_body.read = mock.MagicMock(return_value=b'fake content')
+
+    fake_client = mock.MagicMock()
+    fake_client.get_object = mock.MagicMock(return_value=mock.MagicMock(return_value={'Body': fake_body})())
+
+    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client));
+
+    content = aws.get_s3_file({}, bucket="", key="")
+
+    assert content == b'fake content'

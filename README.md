@@ -43,10 +43,14 @@ docker run -ti --rm -p 5000:7000 -e DP_ECS_CLUSTER=example-cluster -e DP_ECR_REG
 
 ## Environment variables
 
+* DP_APP_ROOT (optional) - root dir of the application
 * DP_ECS_CLUSTER (required) - name of the ecs cluster
 * DP_ECR_REGISTRY (required) - id of the ecr registry
 * DP_ECR_REGION (optional)
 * DP_ECS_REGION (optional)
+* DP_S3_REGION (optional)
+* DP_SCOTTY_YML_S3_BUCKET (required) - bucket of the scotty config yaml file
+* DP_SCOTTY_YML_S3_KEY (required) - key of the scotty config yaml file (filename)
 
 ### AWS specified environment variables
 
@@ -54,3 +58,8 @@ docker run -ti --rm -p 5000:7000 -e DP_ECS_CLUSTER=example-cluster -e DP_ECR_REG
 * AWS_SECRET_ACCESS_KEY - The secret key for your AWS account.
 * AWS_DEFAULT_REGION - The default region to use, e.g. us-east-1.
 * AWS_PROFILE - The default credential and configuration profile to use, if any.
+
+# Further tasks
+
+* Error handling
+* Deploying earlier versions

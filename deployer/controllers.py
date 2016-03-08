@@ -1,10 +1,19 @@
+from functools import wraps
 import json
-from flask import Blueprint, g, render_template, make_response
+from flask import Blueprint, g, render_template, make_response, request
 from .commons import ImageStatuses
 
 
 bp = Blueprint('controllers', __name__, template_folder='templates')
 
+
+def _return_json(fn):
+    @wraps(fn)
+    def inner_fn(*args, **kwargs):
+        response = make_response(json.dumps(fn(*args, **kwargs)))
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    return inner_fn
 
 @bp.route("/", methods=['GET'])
 def index():
@@ -12,6 +21,7 @@ def index():
 
 
 @bp.route("/status", methods=['GET'])
+@_return_json
 def status():
     classes = {
         ImageStatuses.UP_TO_DATE: 'success',
@@ -42,6 +52,10 @@ def status():
         } for image, info in status.items()
     ]
 
-    response = make_response(json.dumps(formatted))
-    response.headers['Content-Type'] = 'application/json'
-    return response
+    return formatted
+
+
+@bp.route("/deploy", methods=['POST'])
+@_return_json
+def deploy():
+    return g.cn.f_('core.deploy_images', images=request.get_json())

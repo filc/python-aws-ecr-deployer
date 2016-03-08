@@ -11,3 +11,5 @@ invoke==0.10.1
 pytz==2015.4
 boto3==1.2.5
 filcutils==0.1.0
+pyyaml==3.11
+scotty==0.1.6

@@ -24,3 +24,13 @@ def test_get_current_images_on_ecs():
         'first_image': (23, 'service_name'),
         'second_image': (23, 'service_name')
     }
+
+
+def test_get_s3_file(monkeypatch):
+    content = aws.get_s3_file({}, bucket="", key="")
+    assert content == b'fake content'
+
+
+def test_get_s3_file_dummy_yml(monkeypatch):
+    content = aws.get_s3_file({}, bucket="", key="dummy_scotty.yml")
+    assert len(content) == 811

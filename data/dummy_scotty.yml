@@ -1,0 +1,44 @@
+globals:
+  task_count: 1
+  context:
+    CONTEXT_VAR: "/srv"
+variables:
+  uwsgi-cmd: &UWSGI_CMD ["uwsgi", "--ini", "/srv/uwsgi.ini"]
+
+clusters:
+  staging:
+    task_count: 2
+    type: ecs
+    name: staging
+    region: us-east-1
+    context:
+      VAR1: ''
+
+  production:
+    task_count: 2
+    type: ecs
+    name: production
+    region: us-east-1
+    context:
+      VAR1: ''
+
+services:
+  service1:
+    task_count: 2
+    containers:
+      - image_path: docker.privaterepo.com/image1
+        command: []
+        env: ["CONTEXT_VAR", "VAR1"]
+        memory: 300
+        cpu: 512
+        ports: ["7000"]
+
+  service2:
+    task_count: 2
+    containers:
+      - image_path: docker.privaterepo.com/image1
+        command: []
+        env: ["CONTEXT_VAR", "VAR1"]
+        memory: 300
+        cpu: 512
+        ports: ["7000"]

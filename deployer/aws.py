@@ -1,7 +1,7 @@
 import boto3
 
 
-__all__ = ['init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry']
+__all__ = ['init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry', 'get_s3_file']
 
 
 def init_adapter(cn):
@@ -13,6 +13,8 @@ def get_current_images_on_ecs(cn, cluster, region='us-east-1'):
 
     :param cluster: name of the ecs cluster
     :type cluster: str
+    :param region: aws region
+    :type region: str
 
     :return: dict
     '''
@@ -36,6 +38,8 @@ def get_latest_images_from_ecr_registry(cn, registry_id, region='us-east-1'):
 
     :param registry_id: id of the ecr registry
     :type registry_id: str
+    :param region: aws region
+    :type region: str
 
     :return: dict
     '''
@@ -49,6 +53,24 @@ def get_latest_images_from_ecr_registry(cn, registry_id, region='us-east-1'):
         latest_images.update({repo['repositoryName']: (_get_latest_version(images), )})
 
     return latest_images
+
+
+def get_s3_file(cn, bucket, key, region='us-east-1'):
+    ''' Returns with a content of an s3 file.
+
+    :param bucket: bucket name
+    :type bucket: str
+    :param key: s3 object key
+    :type key: str
+    :param region: aws region
+    :type region: str
+
+    :return: bytes
+    '''
+
+    client = boto3.client('s3', region_name=region)
+    s3_object = client.get_object(Bucket=bucket, Key=key)
+    return s3_object['Body'].read()
 
 
 def _get_latest_version(images):
