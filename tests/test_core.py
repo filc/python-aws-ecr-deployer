@@ -37,8 +37,8 @@ def test_deploy_images_error(cn, monkeypatch):
 
     result = cn.f_('core.deploy_images', {'image1': 23})
 
-    assert {'version': 23, 'error': 'Error...', 'success': False, 'cluster': 'staging', 'service': 'service1'} in result
-    assert {'version': 23, 'error': 'Error...', 'success': False, 'cluster': 'staging', 'service': 'service2'} in result
+    assert {'version': 23, 'result': 'Error...', 'success': False, 'cluster': 'staging', 'service': 'service1'} in result
+    assert {'version': 23, 'result': 'Error...', 'success': False, 'cluster': 'staging', 'service': 'service2'} in result
 
 def test_deploy_images_success(cn, monkeypatch):
     fake_popen = mock.MagicMock()

@@ -22,7 +22,7 @@ def get_latest_images_from_ecr_registry(cn, registry_id, region=''):
 
 def get_s3_file(cn, bucket, key, region='us-east-1'):
     if key == 'dummy_scotty.yml':
-        with open('data/dummy_scotty.yml', 'r') as f:
+        with open('data/dummy_scotty.yml', 'rb') as f:
             return f.read()
 
     return b'fake content'
