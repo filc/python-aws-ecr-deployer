@@ -63,7 +63,7 @@ def _deploy_service(cn, service, version, cluster):
         return {'success': False, 'service': service, 'version': version, 'cluster': cluster, 'error': str(e)}
 
     if stderr:
-        return {'success': False, 'service': service, 'version': version, 'cluster': cluster, 'error': stderr.decode('utf-8')}
+        return {'success': False, 'service': service, 'version': version, 'cluster': cluster, 'result': stderr.decode('utf-8')}
 
     return {'success': True, 'service': service, 'version': version, 'cluster': cluster, 'result': stdout.decode('utf-8')}
 
