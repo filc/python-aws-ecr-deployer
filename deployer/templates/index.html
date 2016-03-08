@@ -19,6 +19,7 @@
         $(document).ready(function() {
 
             var imagesToDeploy = {};
+            var resultJson = {};
 
             function cellFormatter(value, row, index) {
                 return {classes: row.status_class};
@@ -80,7 +81,27 @@
                 imagesToDeploy = {};
             });
 
+            $('#result-modal').on('shown.bs.modal', function (e) {
+                var modalBody = $('#result-modal .modal-body');
+
+                for (var i in resultJson) {
+                    title = resultJson[i]['service'];
+
+                    if(!resultJson[i]['success']){
+                        title += 'Error: ' + title;
+                    }
+
+                    modalBody.append($('<h2>').html(resultJson[i]['service']));
+                    modalBody.append($('<pre>').html(resultJson[i]['result']));
+                }
+
+                // $('#status-table').bootstrapTable('refresh');
+                resultJson = {};
+            });
+
             $('#btnDeploy').click(function(e){
+                $(e).prop('disabled', true);
+
                 fetch('/deploy', {
                     method: 'post',
                     headers: {
@@ -93,15 +114,9 @@
                     return response.json();
                 })
                 .then(function(json) {
+                    resultJson = json;
+                    $(e).prop('disabled', false);
                     $('#result-modal').modal('show')
-                    $('#result-modal').on('shown.bs.modal', function (e) {
-                        var modalBody = $('#result-modal .modal-body');
-
-                        for (var i in json) {
-                            modalBody.append($('<h2>').html(json[i]['service']));
-                            modalBody.append($('<pre>').html(json[i]['result']));
-                        }
-                    });
                 });
             });
 
