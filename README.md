@@ -63,3 +63,4 @@ docker run -ti --rm -p 5000:7000 -e DP_ECS_CLUSTER=example-cluster -e DP_ECR_REG
 
 * Error handling
 * Deploying earlier versions
+* Controller tests (integration tests)
