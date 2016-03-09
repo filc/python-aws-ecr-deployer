@@ -37,7 +37,9 @@ def deploy_images(cn, images):
     :return list
     '''
 
-    services = _get_services_by_images(cn, images) if images else []
+    _images = {image: version for image, version in images.items() if version > 0}
+
+    services = _get_services_by_images(cn, _images) if _images else []
     return [_deploy_service(cn, service[0], service[1], cn.g_('app_config').get('ecs_cluster')) for service in services]
 
 
@@ -71,16 +73,14 @@ def _deploy_service(cn, service, version, cluster):
 def  _get_services_by_images(cn, images):
     config = _get_service_config(cn);
 
+    services = []
     if isinstance(config, dict) and config.get('services'):
-        services = []
         for service, info in config['services'].items():
             image_name = _get_image_name_from_docker_path(info['containers'][0]['image_path'])
             if image_name in images:
                 services.append((service, images[image_name]))
 
-        return services
-
-    return[]
+    return services
 
 
 def _get_service_config(cn):
