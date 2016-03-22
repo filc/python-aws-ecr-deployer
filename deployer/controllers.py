@@ -19,7 +19,7 @@ def _return_json(fn):
 @bp.route("/", methods=['GET'])
 def index():
     auth = request.authorization
-    basic_auth = '' if not auth else base64.b64encode(':'.join([auth.username, auth.password]))
+    basic_auth = '' if not auth else base64.b64encode(bytes(':'.join([auth.username, auth.password]), 'utf-8'))
     return render_template('index.html', base_url=g.cn.g_('app_config').get('base_url'), basic_auth=basic_auth)
 
 
