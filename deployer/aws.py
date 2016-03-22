@@ -104,7 +104,7 @@ def _get_all_services_on_ecs(client, cluster):
 
 def _get_tasks(client, cluster):
     task_arns = _get_all_resources(client.list_tasks, 'taskArns', maxResults=100, cluster=cluster)
-    return client.describe_tasks(cluster='lensa-staging', tasks=task_arns)
+    return client.describe_tasks(cluster=cluster, tasks=task_arns)
 
 
 def _get_all_resources(fn, field_name, **kwargs):
