@@ -2,6 +2,7 @@ from functools import wraps
 import json
 from flask import Blueprint, g, render_template, make_response, request
 from .commons import ImageStatuses
+import base64
 
 
 bp = Blueprint('controllers', __name__, template_folder='templates')
@@ -17,7 +18,9 @@ def _return_json(fn):
 
 @bp.route("/", methods=['GET'])
 def index():
-    return render_template('index.html', base_url=g.cn.g_('app_config').get('base_url'))
+    auth = request.authorization
+    basic_auth = '' if not auth else base64.b64encode(':'.join(auth.username, auth.password))
+    return render_template('index.html', base_url=g.cn.g_('app_config').get('base_url'), basic_auth=basic_auth)
 
 
 @bp.route("/status", methods=['GET'])

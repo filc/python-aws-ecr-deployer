@@ -100,15 +100,23 @@
             });
 
             $('#btnDeploy').click(function(e){
+                var basicAuth = '{{ basic_auth }}';
+
+                var headers = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+
+                if (basicAuth) {
+                    headers['Authorization'] = "Basic " + basicAuth;
+                }
+
                 $(e).prop('disabled', true);
 
                 fetch('{{ base_url }}/deploy', {
                     method: 'post',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
+                    headers: headers,
                     body: JSON.stringify(imagesToDeploy)
                 })
                 .then(function(response) {
