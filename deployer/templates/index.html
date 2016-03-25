@@ -81,6 +81,10 @@
                 imagesToDeploy = {};
             });
 
+            $('#status-table').on('load-success.bs.table', function(data) {
+               imagesToDeploy = {};
+            });
+
             $('#result-modal').on('shown.bs.modal', function (e) {
                 var modalBody = $('#result-modal .modal-body');
 
@@ -112,7 +116,7 @@
                     headers['Authorization'] = "Basic " + basicAuth;
                 }
 
-                $(e).prop('disabled', true);
+                $('#btnDeploy').prop('disabled', true);
 
                 fetch('{{ base_url }}/deploy', {
                     method: 'post',
@@ -124,7 +128,7 @@
                 })
                 .then(function(json) {
                     resultJson = json;
-                    $(e).prop('disabled', false);
+                    $('#btnDeploy').prop('disabled', false);
                     $('#result-modal').modal('show')
                 });
             });
