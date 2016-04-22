@@ -113,7 +113,7 @@ def _get_all_resources(fn, field_name, **kwargs):
 
     while isinstance(next_token, str):
         if next_token:
-            kwargs.update({nextToken: next_token})
+            kwargs.update({'nextToken': next_token})
 
         partial_result = fn(**kwargs)
         resources += partial_result[field_name]
