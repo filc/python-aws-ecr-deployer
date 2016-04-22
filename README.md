@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/filc/python-aws-ecr-deployer.svg?branch=master)](https://travis-ci.org/filc/python-aws-ecr-deployer)
+
 #AWS ECR-ECS deployer
 
 ## Installation / running
