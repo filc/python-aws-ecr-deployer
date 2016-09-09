@@ -2,6 +2,7 @@ import yaml
 import logging
 from subprocess import Popen, PIPE
 from . import utils
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -36,8 +37,10 @@ def deploy_images(cn, images):
 
     :return list
     '''
+    def _convert_to_int(x):
+        return int(re.sub("[^0-9]", "", x) if isinstance(x, str) else x)
 
-    _images = {image: version for image, version in images.items() if version > 0}
+    _images = {image: _convert_to_int(version) for image, version in images.items() if _convert_to_int(version) > 0}
 
     services = _get_services_by_images(cn, _images) if _images else []
     return [_deploy_service(cn, service[0], service[1], cn.g_('app_config').get('ecs_cluster')) for service in services]
