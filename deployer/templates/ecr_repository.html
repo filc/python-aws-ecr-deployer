@@ -50,10 +50,30 @@
                     "{{ repository }}": btn.attr('data-version')
                 };
 
-                deployImages(imageToDeploy)
+                postAndShowResult('/deploy', imageToDeploy)
                     .then(function () {
                         btn.prop('disabled', false);
                     });
+            });
+
+            $('#btnRemove').click(function(e){
+                if (Object.keys(selectedImages).length < 1) {
+                    return;
+                }
+
+                if (confirm('Are you sure?')) {
+                    $('#btnRemove').prop('disabled', true);
+
+                    var data = {
+                        repository: '{{ repository }}',
+                        images: Object.keys(selectedImages)
+                    }
+
+                    postAndShowResult('/delete_images', data)
+                        .then(function () {
+                            $('#btnRemove').prop('disabled', false);
+                        });
+                }
             });
 
         });

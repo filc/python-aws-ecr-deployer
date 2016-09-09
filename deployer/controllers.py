@@ -80,8 +80,25 @@ def ecr_repository_versions(repository):
     return data
 
 
+@bp.route("/delete_images", methods=['POST'])
+@_return_json
+def delete_images():
+    params = request.get_json()
+
+    if not params.get('images'):
+        return [{'success': False, 'title': 'Nothing happened', 'result': 'No images given'}]
+
+    result = g.cn.f_(
+        'aws.delete_images_from_repository',
+        repository=params['repository'],
+        image_digests=params['images'],
+        region=g.cn.g_('app_config').get('ecr_region')
+    )
+
+    return [{'success': True, 'title': 'Deletion result', 'result': json.dumps(result)}]
+
+
 @bp.route("/deploy", methods=['POST'])
 @_return_json
 def deploy():
-    print(request.get_json())
-    # return g.cn.f_('core.deploy_images', images=request.get_json())
+    return g.cn.f_('core.deploy_images', images=request.get_json())

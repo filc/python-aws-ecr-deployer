@@ -60,7 +60,7 @@
             $('#btnDeploy').click(function(e){
                 $('#btnDeploy').prop('disabled', true);
 
-                deployImages(selectedImages)
+                postAndShowResult('/deploy', selectedImages)
                     .then(function () {
                         $('#btnDeploy').prop('disabled', false);
                     });

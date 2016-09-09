@@ -1,7 +1,10 @@
 import boto3
 import botocore
 
-__all__ = ['init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry', 'get_s3_file', 'get_images_by_repository']
+__all__ = [
+    'init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry',
+    'get_s3_file', 'get_images_by_repository', 'delete_images_from_repository'
+]
 
 
 def init_adapter(cn):
@@ -94,6 +97,21 @@ def get_images_by_repository(cn, repository, region='us-east-1', ecr_client=None
         return []
 
     return []
+
+
+def delete_images_from_repository(cn, repository, image_digests, region='us-east-1'):
+    print('adadadadada')
+    ecr_client = boto3.client('ecr', region_name=region)
+
+    response = ecr_client.batch_delete_image(
+        registryId=cn.g_('app_config').get('ecr_registry'),
+        repositoryName=repository,
+        imageIds=[
+            {'imageDigest': digest} for digest in image_digests
+        ]
+    )
+
+    return response
 
 
 def _get_latest_version(images):

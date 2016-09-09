@@ -62,12 +62,12 @@ def _deploy_service(cn, service, version, cluster):
         stdout, stderr = process.communicate(timeout=300)
     except Exception as e:
         logger.error(str(e))
-        return {'success': False, 'service': service, 'version': version, 'cluster': cluster, 'error': str(e)}
+        return {'success': False, 'title': service, 'version': version, 'cluster': cluster, 'error': str(e)}
 
     if stderr:
-        return {'success': False, 'service': service, 'version': version, 'cluster': cluster, 'result': stderr.decode('utf-8')}
+        return {'success': False, 'title': service, 'version': version, 'cluster': cluster, 'result': stderr.decode('utf-8')}
 
-    return {'success': True, 'service': service, 'version': version, 'cluster': cluster, 'result': stdout.decode('utf-8')}
+    return {'success': True, 'title': service, 'version': version, 'cluster': cluster, 'result': stdout.decode('utf-8')}
 
 
 def _get_services_by_images(cn, images):

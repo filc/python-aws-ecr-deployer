@@ -19,8 +19,8 @@ function fetchAuth(url, body) {
     });
 }
 
-function deployImages(images, deployButton) {
-    return fetchAuth('/deploy', images)
+function postAndShowResult(url, content) {
+    return fetchAuth(url, content)
         .then(function(response) {
             return response.json();
         })
@@ -32,18 +32,17 @@ function deployImages(images, deployButton) {
 
 $(document).ready(function() {
 
-    $('#version-table').on('check.bs.table', function ($element, row) {
-        console.log(row);
-        selectedImages[row.digest] = row.version;
+    $('#versions-table').on('check.bs.table', function ($element, row) {
+        selectedImages[row.digest] = row.tag;
     });
 
-    $('#version-table').on('uncheck.bs.table', function ($element, row) {
+    $('#versions-table').on('uncheck.bs.table', function ($element, row) {
         delete selectedImages[row.digest]
     });
 
-    $('#version-table').on('check-all.bs.table', function ($element, rows) {
+    $('#versions-table').on('check-all.bs.table', function ($element, rows) {
         for (var i in rows) {
-            selectedImages[rows[i].digest] = rows[i].version;
+            selectedImages[rows[i].digest] = rows[i].tag;
         }
     });
 
@@ -61,25 +60,26 @@ $(document).ready(function() {
         }
     });
 
-    $('#version-table, #deployer-table').on('uncheck-all.bs.table', function ($element, rows) {
+    $('#versions-table, #deployer-table').on('uncheck-all.bs.table', function ($element, rows) {
         selectedImages = {};
     });
 
-    $('#version-table, #deployer-table').on('load-success.bs.table', function(data) {
+    $('#versions-table, #deployer-table').on('load-success.bs.table', function(data) {
        selectedImages = {};
     });
 
     $('#result-modal').on('shown.bs.modal', function (e) {
         var modalBody = $('#result-modal .modal-body');
+        modalBody.html('');
 
         for (var i in resultJson) {
-            title = resultJson[i]['service'];
+            title = resultJson[i]['title'];
 
             if(!resultJson[i]['success']){
                 title += 'Error: ' + title;
             }
 
-            modalBody.append($('<h2>').html(resultJson[i]['service']));
+            modalBody.append($('<h2>').html(resultJson[i]['title']));
             modalBody.append($('<pre>').html(resultJson[i]['result']));
         }
 
