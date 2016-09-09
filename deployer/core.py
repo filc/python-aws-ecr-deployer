@@ -49,7 +49,7 @@ def _deploy_service(cn, service, version, cluster):
             'scotty',
             '-c',
             '{}/data/scotty.yml'.format(cn.g_('app_config').get('base_dir')),
-            'deploy' ,
+            'deploy',
             cluster,
             service,
             'v' + str(version)
@@ -70,8 +70,8 @@ def _deploy_service(cn, service, version, cluster):
     return {'success': True, 'service': service, 'version': version, 'cluster': cluster, 'result': stdout.decode('utf-8')}
 
 
-def  _get_services_by_images(cn, images):
-    config = _get_service_config(cn);
+def _get_services_by_images(cn, images):
+    config = _get_service_config(cn)
 
     services = []
     if isinstance(config, dict) and config.get('services'):
@@ -97,6 +97,7 @@ def _get_service_config(cn):
         f.write(config_text.decode('utf-8'))
 
     return yaml.load(config_text)
+
 
 def _get_image_name_from_docker_path(docker_path):
     if '/' in docker_path:

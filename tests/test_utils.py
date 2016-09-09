@@ -2,6 +2,7 @@ import os
 from deployer import utils
 from deployer.commons import ImageStatuses
 
+
 def test_compare_image_versions_empty_images():
     ecs_images = {}
     ecr_images = {}

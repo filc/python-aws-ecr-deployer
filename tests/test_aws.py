@@ -23,7 +23,7 @@ def fake_ecr_client(monkeypatch):
     fake_client.describe_repositories = mock.MagicMock(return_value=fake_ecr_repositories)
     fake_client.list_images = mock.MagicMock(return_value=fake_ecr_images)
 
-    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client));
+    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client))
     return fake_client
 
 
@@ -50,7 +50,7 @@ def fake_ecs_client(monkeypatch):
     fake_client.describe_tasks = mock.MagicMock(return_value=fake_tasks)
     fake_client.describe_task_definition = fake_describe_task_definition
 
-    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client));
+    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client))
     return fake_client
 
 
@@ -62,6 +62,15 @@ def test_init_adapter_is_callable():
 def test_get_latest_images_from_ecr_registry(fake_ecr_client):
     images = aws.get_latest_images_from_ecr_registry({}, 'fake_registry_id')
     assert images == {'fake_repo_name': (3, )}
+
+
+def test_get_images_by_repository(fake_ecr_client):
+    images = aws.get_images_by_repository({}, 'fake_repo')
+    assert images == [
+        {'imageTag': 'v2'},
+        {'imageTag': 'v3'},
+        {'imageTag': 'latest'}
+    ]
 
 
 def test_get_current_images_on_ecs(fake_ecs_client):
@@ -80,7 +89,7 @@ def test_get_s3_file(monkeypatch):
     fake_client = mock.MagicMock()
     fake_client.get_object = mock.MagicMock(return_value=mock.MagicMock(return_value={'Body': fake_body})())
 
-    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client));
+    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client))
 
     content = aws.get_s3_file({}, bucket="", key="")
 

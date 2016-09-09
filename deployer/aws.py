@@ -1,7 +1,7 @@
 import boto3
 
 
-__all__ = ['init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry', 'get_s3_file']
+__all__ = ['init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry', 'get_s3_file', 'get_images_by_repository']
 
 
 def init_adapter(cn):
@@ -49,7 +49,7 @@ def get_latest_images_from_ecr_registry(cn, registry_id, region='us-east-1'):
     repositories = _get_all_resources(ecr_client.describe_repositories, 'repositories', registryId=registry_id)
 
     for repo in repositories:
-        images = _get_all_resources(ecr_client.list_images, 'imageIds', repositoryName=repo['repositoryName'])
+        images = get_images_by_repository(cn, repo['repositoryName'], ecr_client=ecr_client, region=region)
         latest_images.update({repo['repositoryName']: (_get_latest_version(images), )})
 
     return latest_images
@@ -71,6 +71,24 @@ def get_s3_file(cn, bucket, key, region='us-east-1'):
     client = boto3.client('s3', region_name=region)
     s3_object = client.get_object(Bucket=bucket, Key=key)
     return s3_object['Body'].read()
+
+
+def get_images_by_repository(cn, repository, region='us-east-1', ecr_client=None):
+    ''' Returns with all images of the given repository
+
+    :param repository: repository name
+    :type repository: str
+    :param region: aws region
+    :type region: str
+    :param ecr_client: boto3 client for ecr
+    :type region: obj
+
+    :return: list
+    '''
+    if not ecr_client:
+        ecr_client = boto3.client('ecr', region_name=region)
+
+    return _get_all_resources(ecr_client.list_images, 'imageIds', repositoryName=repository)
 
 
 def _get_latest_version(images):

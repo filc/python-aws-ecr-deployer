@@ -1,5 +1,5 @@
 
-__all__ = ['init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry', 'get_s3_file']
+__all__ = ['init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry', 'get_s3_file', 'get_images_by_repository']
 
 
 def init_adapter(cn):
@@ -26,3 +26,13 @@ def get_s3_file(cn, bucket, key, region='us-east-1'):
             return f.read()
 
     return b'fake content'
+
+
+def get_images_by_repository(cn, repository, region='us-east-1', ecr_client=None):
+    return [
+        {'imageDigest': 'alnsdigaja', 'imageTag': 'v11'},
+        {'imageDigest': 'alnsdixcfv', 'imageTag': 'v13'},
+        {'imageDigest': 'alnsdierty', 'imageTag': 'latest'},
+        {'imageDigest': 'alnsdvdfvd', 'imageTag': ''},
+        {'imageDigest': 'alnsdigdff', 'imageTag': ''},
+    ]

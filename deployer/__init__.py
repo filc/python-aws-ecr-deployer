@@ -7,6 +7,7 @@ from .controllers import bp
 
 logger = logging.getLogger(__name__)
 
+
 def create_app(config=None):
     app = Flask(__name__)
     app.config.update(config)

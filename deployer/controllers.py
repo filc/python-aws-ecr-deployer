@@ -5,7 +5,7 @@ from .commons import ImageStatuses
 import base64
 
 
-bp = Blueprint('controllers', __name__, template_folder='templates')
+bp = Blueprint('controllers', __name__, template_folder='templates', static_folder='static')
 
 
 def _return_json(fn):
@@ -16,11 +16,19 @@ def _return_json(fn):
         return response
     return inner_fn
 
+
 @bp.route("/", methods=['GET'])
 def index():
     auth = request.authorization
     basic_auth = '' if not auth else base64.b64encode(bytes(':'.join([auth.username, auth.password]), 'utf-8')).decode('utf-8')
     return render_template('index.html', base_url=g.cn.g_('app_config').get('base_url'), basic_auth=basic_auth)
+
+
+@bp.route("/ecr-repository/<path:repository>", methods=['GET'])
+def ecr_repository(repository):
+    auth = request.authorization
+    basic_auth = '' if not auth else base64.b64encode(bytes(':'.join([auth.username, auth.password]), 'utf-8')).decode('utf-8')
+    return render_template('ecr_repository.html', base_url=g.cn.g_('app_config').get('base_url'), basic_auth=basic_auth, repository=repository)
 
 
 @bp.route("/status", methods=['GET'])
@@ -51,14 +59,29 @@ def status():
             'ecs_version': info['ecs_version'],
             'ecr_version': info['ecr_version'],
             'status_text': texts[info['result']],
-            'status_class': classes[info['result']]
+            'status_class': classes[info['result']],
+            'details_link': '{}/ecr-repository/{}'.format(g.cn.g_('app_config').get('base_url'), image)
         } for image, info in status.items()
     ]
 
     return formatted
 
 
+@bp.route("/ecr-repository-versions/<path:repository>", methods=['GET'])
+@_return_json
+def ecr_repository_versions(repository):
+    data = [
+        {
+            'tag': version.get('imageTag', ''),
+            'digest': version.get('imageDigest', '')
+        } for version in g.cn.f_('aws.get_images_by_repository', repository)
+    ]
+
+    return data
+
+
 @bp.route("/deploy", methods=['POST'])
 @_return_json
 def deploy():
-    return g.cn.f_('core.deploy_images', images=request.get_json())
+    print(request.get_json())
+    # return g.cn.f_('core.deploy_images', images=request.get_json())

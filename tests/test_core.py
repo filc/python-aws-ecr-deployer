@@ -32,7 +32,7 @@ def test_get_status(cn):
 
 def test_deploy_images_error(cn, monkeypatch):
     fake_popen = mock.MagicMock()
-    fake_popen.communicate = mock.MagicMock(return_value=(b'',b'Error...'))
+    fake_popen.communicate = mock.MagicMock(return_value=(b'', b'Error...'))
     monkeypatch.setattr('deployer.core.Popen', mock.MagicMock(return_value=fake_popen))
 
     result = cn.f_('core.deploy_images', {'image1': 23})
@@ -40,9 +40,10 @@ def test_deploy_images_error(cn, monkeypatch):
     assert {'version': 23, 'result': 'Error...', 'success': False, 'cluster': 'staging', 'service': 'service1'} in result
     assert {'version': 23, 'result': 'Error...', 'success': False, 'cluster': 'staging', 'service': 'service2'} in result
 
+
 def test_deploy_images_success(cn, monkeypatch):
     fake_popen = mock.MagicMock()
-    fake_popen.communicate = mock.MagicMock(return_value=(b'stdout...',b''))
+    fake_popen.communicate = mock.MagicMock(return_value=(b'stdout...', b''))
     monkeypatch.setattr('deployer.core.Popen', mock.MagicMock(return_value=fake_popen))
 
     result = cn.f_('core.deploy_images', {'image1': 23})

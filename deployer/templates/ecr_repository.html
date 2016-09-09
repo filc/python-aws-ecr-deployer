@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block body_scripts %}
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            $('#versions-table').bootstrapTable({
+                showRefresh: true,
+                locale: 'en-US',
+                search: true,
+                clickToSelect: true,
+                url: '{{ base_url }}/ecr-repository-versions/{{ repository }}',
+                striped: true,
+                columns: [
+                    {
+                        checkbox: true,
+                    },
+                    {
+                        field: 'tag',
+                        title: 'Version / tag',
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        field: 'digest',
+                        title: 'Digest',
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        field: 'tag',
+                        title: 'Actions',
+                        align: 'right',
+                        formatter: function (value, row, index) {
+                            return '<button class="btn btn-default btn-deploy" row-idx="' + index + '" data-version="' + value + '" type="button" name="deploy" title="Deploy"><i class="glyphicon glyphicon-cloud-upload icon-list-alt"></i></button>';
+                        }
+                    }
+                ]
+            });
+
+            $('body').on('click', 'button.btn-deploy', function(e) {
+                var btn = $(this);
+
+                $('#versions-table').bootstrapTable('uncheck', btn.attr('row-idx'));
+                btn.prop('disabled', true);
+
+                var imageToDeploy = {
+                    "{{ repository }}": btn.attr('data-version')
+                };
+
+                deployImages(imageToDeploy)
+                    .then(function () {
+                        btn.prop('disabled', false);
+                    });
+            });
+
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+    <h4>ECR Repository: {{ repository }}</h4>
+    <div class="bootstrap-table">
+        <div class="fixed-table-toolbar">
+            <div class="columns columns-left btn-group pull-left">
+                <a href="{{ base_url }}" class="btn btn-default" title="Back to home"><i class="glyphicon glyphicon-chevron-left icon-list-alt"></i></a>
+            </div>
+            <div class="columns columns-right btn-group pull-right">
+                <button id="btnRemove" class="btn btn-default" type="button" name="remove" title="Remove selected"><i class="glyphicon glyphicon-remove icon-list-alt"></i></button>
+            </div>
+        </div>
+        <table id="versions-table"></table>
+    </div>
+
+{% endblock %}

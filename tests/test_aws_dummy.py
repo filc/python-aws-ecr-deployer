@@ -34,3 +34,10 @@ def test_get_s3_file(monkeypatch):
 def test_get_s3_file_dummy_yml(monkeypatch):
     content = aws.get_s3_file({}, bucket="", key="dummy_scotty.yml")
     assert len(content) == 811
+
+
+def test_get_images_by_repository(monkeypatch):
+    content = aws.get_images_by_repository({}, repository='asda')
+    assert content[0]['imageDigest'] == 'alnsdigaja'
+    assert content[0]['imageTag'] == 'v11'
+    assert len(content) == 5
