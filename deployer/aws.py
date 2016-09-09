@@ -1,5 +1,5 @@
 import boto3
-
+import botocore
 
 __all__ = ['init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry', 'get_s3_file', 'get_images_by_repository']
 
@@ -88,7 +88,12 @@ def get_images_by_repository(cn, repository, region='us-east-1', ecr_client=None
     if not ecr_client:
         ecr_client = boto3.client('ecr', region_name=region)
 
-    return _get_all_resources(ecr_client.list_images, 'imageIds', repositoryName=repository)
+    try:
+        return _get_all_resources(ecr_client.list_images, 'imageIds', repositoryName=repository)
+    except botocore.exceptions.ClientError as e:
+        return []
+
+    return []
 
 
 def _get_latest_version(images):
