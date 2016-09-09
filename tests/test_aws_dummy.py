@@ -41,3 +41,8 @@ def test_get_images_by_repository(monkeypatch):
     assert content[0]['imageDigest'] == 'alnsdigaja'
     assert content[0]['imageTag'] == 'v11'
     assert len(content) == 5
+
+
+def test_delete_images_from_repository():
+    result = aws.delete_images_from_repository({}, repository='fake_rep', image_digests=['asda'])
+    assert result == {'imageIds': [{'imageDigest': 'asda'}], 'failures': []}

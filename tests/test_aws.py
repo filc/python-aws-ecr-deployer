@@ -94,3 +94,19 @@ def test_get_s3_file(monkeypatch):
     content = aws.get_s3_file({}, bucket="", key="")
 
     assert content == b'fake content'
+
+
+def test_delete_images_from_repository(monkeypatch):
+    fake_client = mock.MagicMock()
+    fake_client.batch_delete_image = mock.MagicMock()
+    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client))
+
+    fake_cn = mock.MagicMock()
+    fake_cn.g_ = mock.MagicMock(return_value={'ecr_registry': 'test'})
+
+    result = aws.delete_images_from_repository(fake_cn, 'fake_rep', ['i1', 'i2'])
+    fake_client.batch_delete_image.assert_called_with(
+        imageIds=[{'imageDigest': 'i1'}, {'imageDigest': 'i2'}],
+        registryId='test',
+        repositoryName='fake_rep'
+    )

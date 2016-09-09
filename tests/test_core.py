@@ -37,8 +37,8 @@ def test_deploy_images_error(cn, monkeypatch):
 
     result = cn.f_('core.deploy_images', {'image1': 23})
 
-    assert {'version': 23, 'result': 'Error...', 'success': False, 'cluster': 'staging', 'service': 'service1'} in result
-    assert {'version': 23, 'result': 'Error...', 'success': False, 'cluster': 'staging', 'service': 'service2'} in result
+    assert {'version': 23, 'result': 'Error...', 'success': False, 'cluster': 'staging', 'title': 'service1'} in result
+    assert {'version': 23, 'result': 'Error...', 'success': False, 'cluster': 'staging', 'title': 'service2'} in result
 
 
 def test_deploy_images_success(cn, monkeypatch):
@@ -48,8 +48,8 @@ def test_deploy_images_success(cn, monkeypatch):
 
     result = cn.f_('core.deploy_images', {'image1': 23})
 
-    assert {'success': True, 'version': 23, 'service': 'service1', 'cluster': 'staging', 'result': 'stdout...'} in result
-    assert {'success': True, 'version': 23, 'service': 'service2', 'cluster': 'staging', 'result': 'stdout...'} in result
+    assert {'success': True, 'version': 23, 'title': 'service1', 'cluster': 'staging', 'result': 'stdout...'} in result
+    assert {'success': True, 'version': 23, 'title': 'service2', 'cluster': 'staging', 'result': 'stdout...'} in result
 
 
 def test_deploy_images_process_exception(cn, monkeypatch):
@@ -63,5 +63,5 @@ def test_deploy_images_process_exception(cn, monkeypatch):
 
     result = cn.f_('core.deploy_images', {'image1': 23})
 
-    assert {'success': False, 'version': 23, 'service': 'service1', 'cluster': 'staging', 'error': 'Error...'} in result
-    assert {'success': False, 'version': 23, 'service': 'service2', 'cluster': 'staging', 'error': 'Error...'} in result
+    assert {'success': False, 'version': 23, 'title': 'service1', 'cluster': 'staging', 'error': 'Error...'} in result
+    assert {'success': False, 'version': 23, 'title': 'service2', 'cluster': 'staging', 'error': 'Error...'} in result

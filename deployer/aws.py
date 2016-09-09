@@ -100,7 +100,6 @@ def get_images_by_repository(cn, repository, region='us-east-1', ecr_client=None
 
 
 def delete_images_from_repository(cn, repository, image_digests, region='us-east-1'):
-    print('adadadadada')
     ecr_client = boto3.client('ecr', region_name=region)
 
     response = ecr_client.batch_delete_image(
@@ -132,7 +131,7 @@ def _get_all_services_on_ecs(client, cluster):
     services = []
     images = []
 
-    tasks = _get_tasks(client, cluster);
+    tasks = _get_tasks(client, cluster)
     for task in tasks['tasks']:
         service = client.describe_task_definition(taskDefinition=task['taskDefinitionArn'])['taskDefinition']['containerDefinitions'][0]
         if service['image'] not in images:

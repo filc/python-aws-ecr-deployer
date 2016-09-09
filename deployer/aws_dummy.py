@@ -1,5 +1,8 @@
 
-__all__ = ['init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry', 'get_s3_file', 'get_images_by_repository']
+__all__ = [
+    'init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry',
+    'get_s3_file', 'get_images_by_repository', 'delete_images_from_repository'
+]
 
 
 def init_adapter(cn):
@@ -36,3 +39,7 @@ def get_images_by_repository(cn, repository, region='us-east-1', ecr_client=None
         {'imageDigest': 'alnsdvdfvd', 'imageTag': ''},
         {'imageDigest': 'alnsdigdff', 'imageTag': ''},
     ]
+
+
+def delete_images_from_repository(cn, repository, image_digests, region='us-east-1'):
+    return {'imageIds': [{'imageDigest': digest} for digest in image_digests], 'failures': []}
