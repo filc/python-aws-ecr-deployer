@@ -101,16 +101,22 @@ def get_images_by_repository(cn, repository, region='us-east-1', ecr_client=None
 
 def delete_images_from_repository(cn, repository, image_digests, region='us-east-1'):
     ecr_client = boto3.client('ecr', region_name=region)
+    responses = []
 
-    response = ecr_client.batch_delete_image(
-        registryId=cn.g_('app_config').get('ecr_registry'),
-        repositoryName=repository,
-        imageIds=[
-            {'imageDigest': digest} for digest in image_digests
-        ]
-    )
+    start_idx = 0
+    while start_idx < len(image_digests):
+        response = ecr_client.batch_delete_image(
+            registryId=cn.g_('app_config').get('ecr_registry'),
+            repositoryName=repository,
+            imageIds=[
+                {'imageDigest': digest} for digest in image_digests[start_idx:start_idx + 99]
+            ]
+        )
 
-    return response
+        responses.append(response)
+        start_idx += 99
+
+    return responses
 
 
 def _get_latest_version(images):
