@@ -100,6 +100,17 @@ def get_images_by_repository(cn, repository, region='us-east-1', ecr_client=None
 
 
 def delete_images_from_repository(cn, repository, image_digests, region='us-east-1'):
+    ''' Removes the given images from the ecr repositories
+
+    :param repository: repository name
+    :type repository: str
+    :param image_digests: digest hash of the images
+    :type image_digests: list
+    :param region: aws region
+    :type region: str
+
+    :return: list
+    '''
     ecr_client = boto3.client('ecr', region_name=region)
     responses = []
 
