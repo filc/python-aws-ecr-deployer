@@ -14,56 +14,56 @@ def test_compare_image_versions_empty_images():
 def test_compare_image_versions():
     cases = [
         [
-            {'image': (13, )},
-            {'image': (13, )},
+            {'image': ('v13', )},
+            {'image': ('v13', '')},
             {
                 'image': {
-                    'ecr_version': 13,
-                    'ecs_version': 13,
+                    'ecr_version': 'v13',
+                    'ecs_version': 'v13',
                     'result': ImageStatuses.UP_TO_DATE
                 }
             }
         ],
         [
-            {'image': (13, )},
+            {'image': ('v13', )},
             {},
             {
                 'image': {
-                    'ecr_version': 13,
-                    'ecs_version': 0,
+                    'ecr_version': 'v13',
+                    'ecs_version': '',
                     'result': ImageStatuses.ONLY_IN_ECR
                 }
             }
         ],
         [
-            {'image': (13, )},
-            {'image': (11, )},
+            {'image': ('v13', )},
+            {'image': ('v11', '')},
             {
                 'image': {
-                    'ecr_version': 13,
-                    'ecs_version': 11,
+                    'ecr_version': 'v13',
+                    'ecs_version': 'v11',
                     'result': ImageStatuses.GREATER_IN_ECR
                 }
             }
         ],
         [
-            {'image': (11, )},
-            {'image': (13, )},
+            {'image': ('v11', )},
+            {'image': ('v13', '')},
             {
                 'image': {
-                    'ecr_version': 11,
-                    'ecs_version': 13,
+                    'ecr_version': 'v11',
+                    'ecs_version': 'v13',
                     'result': ImageStatuses.GREATER_IN_ECS
                 }
             }
         ],
         [
             {},
-            {'image': (13, )},
+            {'image': ('v13', '')},
             {
                 'image': {
-                    'ecr_version': 0,
-                    'ecs_version': 13,
+                    'ecr_version': '',
+                    'ecs_version': 'v13',
                     'result': ImageStatuses.ONLY_IN_ECS
                 }
             }

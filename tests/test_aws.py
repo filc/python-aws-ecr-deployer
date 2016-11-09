@@ -61,7 +61,7 @@ def test_init_adapter_is_callable():
 
 def test_get_latest_images_from_ecr_registry(fake_ecr_client):
     images = aws.get_latest_images_from_ecr_registry({}, 'fake_registry_id')
-    assert images == {'fake_repo_name': (3, )}
+    assert images == {'fake_repo_name': ('v3', )}
 
 
 def test_get_images_by_repository(fake_ecr_client):
@@ -77,8 +77,8 @@ def test_get_current_images_on_ecs(fake_ecs_client):
     images = aws.get_current_images_on_ecs({}, 'fake_region')
 
     assert images == {
-        'first_image': (23, 'service_name'),
-        'second_image': (23, 'service_name')
+        'first_image': ('v23', 'service_name'),
+        'second_image': ('v23', 'service_name')
     }
 
 

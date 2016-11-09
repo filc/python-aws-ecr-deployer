@@ -24,8 +24,8 @@ def test_get_status(cn):
     status = cn.f_('core.get_status', 'fake', 'fake')
 
     assert status['second_image'] == {
-        'ecs_version': 23,
-        'ecr_version': 23,
+        'ecs_version': 'v23',
+        'ecr_version': 'v23',
         'result': 'UP_TO_DATE'
     }
 

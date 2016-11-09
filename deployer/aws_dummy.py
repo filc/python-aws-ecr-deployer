@@ -11,15 +11,17 @@ def init_adapter(cn):
 
 def get_current_images_on_ecs(cn, cluster, region=''):
     return {
-        'first_image': (23, 'service_name'),
-        'second_image': (23, 'service_name')
+        'first_image': ('v23', 'service_name'),
+        'second_image': ('v23', 'service_name'),
+        'third_image': ('other-branchv25', 'service_name')
     }
 
 
 def get_latest_images_from_ecr_registry(cn, registry_id, region=''):
     return {
-        'fake_repo_name': (3, ),
-        'second_image': (23, )
+        'fake_repo_name': ('v3', ),
+        'second_image': ('v23', ),
+        'third_image': ('v25', )
     }
 
 

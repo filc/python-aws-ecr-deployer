@@ -12,8 +12,9 @@ def test_get_latest_images_from_ecr_registry():
     images = aws.get_latest_images_from_ecr_registry({}, 'fake_registry_id')
 
     assert images == {
-        'fake_repo_name': (3, ),
-        'second_image': (23, )
+        'fake_repo_name': ('v3', ),
+        'second_image': ('v23', ),
+        'third_image': ('v25', )
     }
 
 
@@ -21,8 +22,9 @@ def test_get_current_images_on_ecs():
     images = aws.get_current_images_on_ecs({}, 'fake_region')
 
     assert images == {
-        'first_image': (23, 'service_name'),
-        'second_image': (23, 'service_name')
+        'first_image': ('v23', 'service_name'),
+        'second_image': ('v23', 'service_name'),
+        'third_image': ('other-branchv25', 'service_name')
     }
 
 

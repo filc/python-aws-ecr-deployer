@@ -1,5 +1,6 @@
 import boto3
 import botocore
+import re
 
 __all__ = [
     'init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry',
@@ -28,10 +29,14 @@ def get_current_images_on_ecs(cn, cluster, region='us-east-1'):
     services = _get_all_services_on_ecs(ecs_client, cluster)
     for service in services:
         last_parts = service['image'].split('/', 1)[-1].split(':')
+
         image_name = last_parts[0]
-        if last_parts[1][0] == 'v':
-            version = int(last_parts[1][1:])
-            current_images.update({image_name: (version, service['name'])})
+        image_tag = last_parts[1]
+        tag_parts = re.search(r'v([0-9]+)$', image_tag)
+
+        if tag_parts and tag_parts.group(1):
+            version = int(tag_parts.group(1))
+            current_images.update({image_name: (image_tag, service['name'])})
 
     return current_images
 
@@ -132,16 +137,14 @@ def delete_images_from_repository(cn, repository, image_digests, region='us-east
 
 def _get_latest_version(images):
     latest_version = 0
+
     for image in images:
-        version = image.get('imageTag', '')[1:]
+        matches = re.search(r'^v([0-9]+)$', image.get('imageTag', ''))
 
-        try:
-            if latest_version < int(version):
-                latest_version = int(version)
-        except ValueError:
-            pass
+        if matches and latest_version < int(matches.group(1)):
+            latest_version = int(matches.group(1))
 
-    return latest_version
+    return 'v{}'.format(latest_version)
 
 
 def _get_all_services_on_ecs(client, cluster):

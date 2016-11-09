@@ -37,16 +37,20 @@ def deploy_images(cn, images):
 
     :return list
     '''
-    def _convert_to_int(x):
-        return int(re.sub("[^0-9]", "", x) if isinstance(x, str) else x)
 
-    _images = {image: _convert_to_int(version) for image, version in images.items() if _convert_to_int(version) > 0}
+    def _get_real_tag(tag):
+        return 'v{}'.format(tag) if re.match(r'^[0-9]$', str(tag)) else tag
+
+    # def _convert_to_int(x):
+    #     return int(re.sub("[^0-9]", "", x) if isinstance(x, str) else x)
+
+    _images = {image: _get_real_tag(tag) for image, tag in images.items() if _get_real_tag(tag)}
 
     services = _get_services_by_images(cn, _images) if _images else []
     return [_deploy_service(cn, service[0], service[1], cn.g_('app_config').get('ecs_cluster')) for service in services]
 
 
-def _deploy_service(cn, service, version, cluster):
+def _deploy_service(cn, service, tag, cluster):
     process = Popen(
         [
             'scotty',
@@ -55,7 +59,7 @@ def _deploy_service(cn, service, version, cluster):
             'deploy',
             cluster,
             service,
-            'v' + str(version)
+            tag
         ],
         stdout=PIPE,
         stderr=PIPE
@@ -65,12 +69,12 @@ def _deploy_service(cn, service, version, cluster):
         stdout, stderr = process.communicate(timeout=300)
     except Exception as e:
         logger.error(str(e))
-        return {'success': False, 'title': service, 'version': version, 'cluster': cluster, 'error': str(e)}
+        return {'success': False, 'title': service, 'version': tag, 'cluster': cluster, 'error': str(e)}
 
     if stderr:
-        return {'success': False, 'title': service, 'version': version, 'cluster': cluster, 'result': stderr.decode('utf-8')}
+        return {'success': False, 'title': service, 'version': tag, 'cluster': cluster, 'result': stderr.decode('utf-8')}
 
-    return {'success': True, 'title': service, 'version': version, 'cluster': cluster, 'result': stdout.decode('utf-8')}
+    return {'success': True, 'title': service, 'version': tag, 'cluster': cluster, 'result': stdout.decode('utf-8')}
 
 
 def _get_services_by_images(cn, images):

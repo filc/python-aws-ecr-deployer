@@ -39,7 +39,8 @@ def status():
         ImageStatuses.ONLY_IN_ECR: 'warning',
         ImageStatuses.GREATER_IN_ECR: 'warning',
         ImageStatuses.GREATER_IN_ECS: 'danger',
-        ImageStatuses.ONLY_IN_ECS: 'danger'
+        ImageStatuses.ONLY_IN_ECS: 'danger',
+        ImageStatuses.OTHER_BRANCH_IN_ECS: 'warning'
     }
 
     texts = {
@@ -47,7 +48,8 @@ def status():
         ImageStatuses.ONLY_IN_ECR: 'Only in ECR',
         ImageStatuses.GREATER_IN_ECR: 'Not the latest',
         ImageStatuses.GREATER_IN_ECS: 'What???',
-        ImageStatuses.ONLY_IN_ECS: 'Only on ECS'
+        ImageStatuses.ONLY_IN_ECS: 'Only on ECS',
+        ImageStatuses.OTHER_BRANCH_IN_ECS: 'Other branch on ECS'
     }
 
     config = g.cn.g_('app_config')
@@ -56,7 +58,7 @@ def status():
     formatted = [
         {
             'image_name': image,
-            'ecs_version': info['ecs_version'],
+            'ecs_version': str(info['ecs_version']),
             'ecr_version': info['ecr_version'],
             'status_text': texts[info['result']],
             'status_class': classes[info['result']],
