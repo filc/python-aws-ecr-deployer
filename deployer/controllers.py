@@ -59,7 +59,7 @@ def index():
     return {}
 
 
-@bp.route("/ecr-repository/<path:repository>", methods=['GET'])
+@bp.route("/ecr-repository/<path:repository>", methods=['GET', 'POST'])
 @_handle_ecs_cluster_selection
 @_template_rendering('ecr_repository.html')
 def ecr_repository(repository):
