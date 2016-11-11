@@ -18,7 +18,6 @@ session = {
 
 default_region = os.environ.get('AWS_DEFAULT_REGION', None)
 
-ecs_cluster = os.environ.get('DP_ECS_CLUSTER', '')
 ecr_registry = os.environ.get('DP_ECR_REGISTRY', '')
 ecs_region = os.environ.get('DP_ECS_REGION', default_region or 'us-east-1')
 ecr_region = os.environ.get('DP_ECR_REGION', default_region or 'us-east-1')

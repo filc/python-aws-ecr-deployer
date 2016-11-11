@@ -50,7 +50,7 @@
                     "{{ repository }}": btn.attr('data-version')
                 };
 
-                postAndShowResult('/deploy', imageToDeploy)
+                postAndShowResult('/deploy', {images: imageToDeploy})
                     .then(function () {
                         btn.prop('disabled', false);
                     });

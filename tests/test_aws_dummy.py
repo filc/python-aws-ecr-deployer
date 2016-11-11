@@ -48,3 +48,12 @@ def test_get_images_by_repository(monkeypatch):
 def test_delete_images_from_repository():
     result = aws.delete_images_from_repository({}, repository='fake_rep', image_digests=['asda'])
     assert result == {'imageIds': [{'imageDigest': 'asda'}], 'failures': []}
+
+
+def test_get_ecs_clusters():
+    result = aws.get_ecs_clusters({})
+    assert result == [
+        {'clusterArn': 'arn:cluster1', 'clusterName': 'cluster1'},
+        {'clusterArn': 'arn:cluster2', 'clusterName': 'cluster2'},
+        {'clusterArn': 'arn:cluster3', 'clusterName': 'cluster3'}
+    ]

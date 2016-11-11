@@ -1,7 +1,8 @@
 
 __all__ = [
     'init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry',
-    'get_s3_file', 'get_images_by_repository', 'delete_images_from_repository'
+    'get_s3_file', 'get_images_by_repository', 'delete_images_from_repository',
+    'get_ecs_clusters'
 ]
 
 
@@ -45,3 +46,11 @@ def get_images_by_repository(cn, repository, region='us-east-1', ecr_client=None
 
 def delete_images_from_repository(cn, repository, image_digests, region='us-east-1'):
     return {'imageIds': [{'imageDigest': digest} for digest in image_digests], 'failures': []}
+
+
+def get_ecs_clusters(cn, region='us-east-1'):
+    return [
+        {'clusterArn': 'arn:cluster1', 'clusterName': 'cluster1'},
+        {'clusterArn': 'arn:cluster2', 'clusterName': 'cluster2'},
+        {'clusterArn': 'arn:cluster3', 'clusterName': 'cluster3'}
+    ]

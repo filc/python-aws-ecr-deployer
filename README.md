@@ -37,9 +37,9 @@ python3 serve.py
 ```
 docker build -t deployer .
 
-docker run -ti --rm -p 5000:7000 -e DP_ECS_CLUSTER=example-cluster -e DP_ECR_REGISTRY=0123456789 deployer inv precommit
+docker run -ti --rm -p 5000:7000 -e DP_ECR_REGISTRY=0123456789 deployer inv precommit
 
-docker run -ti --rm -p 5000:7000 -e DP_ECS_CLUSTER=example-cluster -e DP_ECR_REGISTRY=0123456789 -e DP_ECR_REGION=us-east-1 -e DP_ECS_REGION=us-east-1 deployer
+docker run -ti --rm -p 5000:7000 -e DP_ECR_REGISTRY=0123456789 -e DP_ECR_REGION=us-east-1 -e DP_ECS_REGION=us-east-1 deployer
 
 ```
 

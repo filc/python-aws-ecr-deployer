@@ -30,7 +30,27 @@
 
         <div class="container">
             <h1>ECR-ECS deployer</h1>
-            {% block content %}{% endblock %}
+
+            <div>
+                {% if not selected_ecs_cluster %}
+                    <h3>Select an ECS cluster...</h3>
+                {% else %}
+                    <h3 style="color:red">{{ selected_ecs_cluster }}</h3>
+                {% endif %}
+
+                <form method="POST">
+                    <select name="selected_ecs_cluster">
+                        {% for cluster in ecs_clusters %}
+                            <option name="{{ cluster['clusterName'] }}" {% if cluster['clusterName'] == selected_ecs_cluster %} selected="true" {% endif %}>{{ cluster['clusterName'] }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" class="btn" value="Select" />
+                </form>
+            </div>
+
+            {% if selected_ecs_cluster %}
+                {% block content %}{% endblock %}
+            {% endif %}
         </div>
 
         <div id="result-modal" class="modal fade" tabindex="-1" role="dialog">

@@ -15,6 +15,7 @@ function fetchAuth(url, body) {
     return fetch(baseUrl + url, {
         method: 'post',
         headers: headers,
+        credentials: 'same-origin',
         body: JSON.stringify(body)
     });
 }
@@ -25,8 +26,12 @@ function postAndShowResult(url, content) {
             return response.json();
         })
         .then(function(json) {
-            resultJson = json;
-            $('#result-modal').modal('show');
+            if (typeof(json) === 'object' && !json.success) {
+                alert(json.error);
+            } else {
+                resultJson = json;
+                $('#result-modal').modal('show');
+            }
         });
 }
 

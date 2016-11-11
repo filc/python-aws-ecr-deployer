@@ -1,9 +1,8 @@
 from functools import wraps
 import json
-from flask import Blueprint, g, render_template, make_response, request
+from flask import Blueprint, g, render_template, make_response, request, abort
 from .commons import ImageStatuses
 import base64
-
 
 bp = Blueprint('controllers', __name__, template_folder='templates', static_folder='static')
 
@@ -17,18 +16,56 @@ def _return_json(fn):
     return inner_fn
 
 
-@bp.route("/", methods=['GET'])
+def _template_rendering(template):
+    def decorator(fn):
+        @wraps(fn)
+        def inner_fn(*args, **kwargs):
+            data = fn(*args, **kwargs)
+
+            auth = request.authorization
+            basic_auth = '' if not auth else base64.b64encode(bytes(':'.join([auth.username, auth.password]), 'utf-8')).decode('utf-8')
+
+            data.update({
+                'basic_auth': basic_auth,
+                'base_url': g.cn.g_('app_config').get('base_url'),
+                'ecs_clusters': g.cn.f_('aws.get_ecs_clusters', region=g.cn.g_('app_config').get('ecs_region')),
+                'selected_ecs_cluster': g.cn.g_('session').get('selected_ecs_cluster')
+            })
+
+            return render_template(template, **data)
+        return inner_fn
+    return decorator
+
+
+def _handle_ecs_cluster_selection(fn):
+    @wraps(fn)
+    def inner_fn(*args, **kwargs):
+        if request.method == "POST":
+            selected_cluster = request.form.get('selected_ecs_cluster')
+
+            if selected_cluster:
+                g.cn.g_('session')['selected_ecs_cluster'] = selected_cluster
+            elif request.form.get('clear_cluster') and g.cn.g_('session').get('selected_ecs_cluster'):
+                del(g.cn.g_('session')['selected_ecs_cluster'])
+
+        return fn(*args, **kwargs)
+    return inner_fn
+
+
+@bp.route("/", methods=['GET', 'POST'])
+@_handle_ecs_cluster_selection
+@_template_rendering('index.html')
 def index():
-    auth = request.authorization
-    basic_auth = '' if not auth else base64.b64encode(bytes(':'.join([auth.username, auth.password]), 'utf-8')).decode('utf-8')
-    return render_template('index.html', base_url=g.cn.g_('app_config').get('base_url'), basic_auth=basic_auth)
+    return {}
 
 
 @bp.route("/ecr-repository/<path:repository>", methods=['GET'])
+@_handle_ecs_cluster_selection
+@_template_rendering('ecr_repository.html')
 def ecr_repository(repository):
-    auth = request.authorization
-    basic_auth = '' if not auth else base64.b64encode(bytes(':'.join([auth.username, auth.password]), 'utf-8')).decode('utf-8')
-    return render_template('ecr_repository.html', base_url=g.cn.g_('app_config').get('base_url'), basic_auth=basic_auth, repository=repository)
+    return {
+        'repository': repository
+    }
 
 
 @bp.route("/status", methods=['GET'])
@@ -53,7 +90,7 @@ def status():
     }
 
     config = g.cn.g_('app_config')
-    status = g.cn.f_('core.get_status', config.get('ecs_cluster'), config.get('ecr_registry'))
+    status = g.cn.f_('core.get_status', g.cn.g_('session').get('selected_ecs_cluster'), config.get('ecr_registry'))
 
     formatted = [
         {
@@ -103,4 +140,13 @@ def delete_images():
 @bp.route("/deploy", methods=['POST'])
 @_return_json
 def deploy():
-    return g.cn.f_('core.deploy_images', images=request.get_json())
+    params = request.get_json()
+    cluster = params.get('cluster') or g.cn.g_('session').get('selected_ecs_cluster')
+    images = params.get('images')
+
+    if not images or not cluster:
+        print(images)
+        print(cluster)
+        return {'success': False, 'error': 'Missing fields...'}
+
+    return g.cn.f_('core.deploy_images', images=images, cluster=cluster)

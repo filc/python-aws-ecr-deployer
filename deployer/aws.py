@@ -4,7 +4,8 @@ import re
 
 __all__ = [
     'init_adapter', 'get_current_images_on_ecs', 'get_latest_images_from_ecr_registry',
-    'get_s3_file', 'get_images_by_repository', 'delete_images_from_repository'
+    'get_s3_file', 'get_images_by_repository', 'delete_images_from_repository',
+    'get_ecs_clusters'
 ]
 
 
@@ -34,9 +35,7 @@ def get_current_images_on_ecs(cn, cluster, region='us-east-1'):
         image_tag = last_parts[1]
         tag_parts = re.search(r'v([0-9]+)$', image_tag)
 
-        if tag_parts and tag_parts.group(1):
-            version = int(tag_parts.group(1))
-            current_images.update({image_name: (image_tag, service['name'])})
+        current_images.update({image_name: (image_tag, service['name'])})
 
     return current_images
 
@@ -135,6 +134,32 @@ def delete_images_from_repository(cn, repository, image_digests, region='us-east
     return responses
 
 
+def get_ecs_clusters(cn, region='us-east-1'):
+    ''' Get the ECS clusters from the current account.
+
+    :param region: aws region
+    :type region: str
+
+    :return: list
+    '''
+    ecs_client = boto3.client('ecs', region_name=region)
+    expected_fields = ('clusterArn', 'clusterName')
+
+    cluster_response = ecs_client.describe_clusters(
+        clusters=_get_all_resources(ecs_client.list_clusters, 'clusterArns')
+    )
+
+    if not cluster_response:
+        return []
+
+    clusters = [
+        {k: v for k, v in cluster.items() if k in expected_fields}
+        for cluster in cluster_response['clusters']
+    ]
+
+    return clusters
+
+
 def _get_latest_version(images):
     latest_version = 0
 
@@ -152,7 +177,7 @@ def _get_all_services_on_ecs(client, cluster):
     images = []
 
     tasks = _get_tasks(client, cluster)
-    for task in tasks['tasks']:
+    for task in tasks.get('tasks', []):
         service = client.describe_task_definition(taskDefinition=task['taskDefinitionArn'])['taskDefinition']['containerDefinitions'][0]
         if service['image'] not in images:
             services.append(service)
@@ -164,7 +189,11 @@ def _get_all_services_on_ecs(client, cluster):
 
 def _get_tasks(client, cluster):
     task_arns = _get_all_resources(client.list_tasks, 'taskArns', maxResults=100, cluster=cluster)
-    return client.describe_tasks(cluster=cluster, tasks=task_arns)
+
+    if task_arns:
+        return client.describe_tasks(cluster=cluster, tasks=task_arns)
+
+    return {}
 
 
 def _get_all_resources(fn, field_name, **kwargs):
@@ -176,7 +205,9 @@ def _get_all_resources(fn, field_name, **kwargs):
             kwargs.update({'nextToken': next_token})
 
         partial_result = fn(**kwargs)
-        resources += partial_result[field_name]
+        if partial_result.get(field_name):
+            resources += partial_result[field_name]
+
         next_token = partial_result.get('nextToken')
 
     return resources

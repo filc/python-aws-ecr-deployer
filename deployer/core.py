@@ -29,7 +29,7 @@ def get_status(cn, ecs_cluster, ecr_registry_id):
     return utils.compare_image_versions(ecs_images, ecr_images)
 
 
-def deploy_images(cn, images):
+def deploy_images(cn, images, cluster):
     ''' Deploy the given images with given version. Returns with the list of the results of the deployment.
 
     :param images: images with the versions
@@ -47,7 +47,7 @@ def deploy_images(cn, images):
     _images = {image: _get_real_tag(tag) for image, tag in images.items() if _get_real_tag(tag)}
 
     services = _get_services_by_images(cn, _images) if _images else []
-    return [_deploy_service(cn, service[0], service[1], cn.g_('app_config').get('ecs_cluster')) for service in services]
+    return [_deploy_service(cn, service[0], service[1], cluster) for service in services]
 
 
 def _deploy_service(cn, service, tag, cluster):

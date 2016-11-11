@@ -110,3 +110,33 @@ def test_delete_images_from_repository(monkeypatch):
         registryId='test',
         repositoryName='fake_rep'
     )
+
+
+def test_get_ecs_clusters(monkeypatch):
+    fake_ecs_clusters = {
+        'clusters': [
+            {'clusterArn': 'arn1', 'clusterName': 'cluster1'},
+            {'clusterArn': 'arn2', 'clusterName': 'cluster2'}
+        ]
+    }
+
+    fake_ecs_cluster_list = {
+        'clusterArns': []
+    }
+
+    fake_client = mock.MagicMock()
+    fake_client.describe_clusters = mock.MagicMock(return_value=fake_ecs_clusters)
+    fake_client.list_clusters = mock.MagicMock(return_value=fake_ecs_cluster_list)
+
+    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client))
+    assert aws.get_ecs_clusters({}) == [{'clusterArn': 'arn1', 'clusterName': 'cluster1'}, {'clusterArn': 'arn2', 'clusterName': 'cluster2'}]
+
+
+def test_get_ecs_clusters_empty(monkeypatch):
+    fake_ecs_cluster_list = {}
+
+    fake_client = mock.MagicMock()
+    fake_client.list_clusters = mock.MagicMock(return_value=fake_ecs_cluster_list)
+    monkeypatch.setattr('deployer.aws.boto3.client', mock.MagicMock(return_value=fake_client))
+
+    assert aws.get_ecs_clusters({}) == []
