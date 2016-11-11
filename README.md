@@ -47,7 +47,6 @@ docker run -ti --rm -p 5000:7000 -e DP_ECR_REGISTRY=0123456789 -e DP_ECR_REGION=
 
 * DP_BASE_URL (optional) - base url of the application like "http://example.com/deployer"
 * DP_APP_ROOT (optional) - root dir of the application
-* DP_ECS_CLUSTER (required) - name of the ecs cluster
 * DP_ECR_REGISTRY (required) - id of the ecr registry
 * DP_ECR_REGION (optional)
 * DP_ECS_REGION (optional)
@@ -67,4 +66,3 @@ docker run -ti --rm -p 5000:7000 -e DP_ECR_REGISTRY=0123456789 -e DP_ECR_REGION=
 * Error handling
 * Controller tests (integration tests)
 * Check repo version on deploy (don't deploy images with version 0)
-* Handle more clusters
