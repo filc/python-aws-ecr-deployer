@@ -26,7 +26,7 @@ function postAndShowResult(url, content) {
             return response.json();
         })
         .then(function(json) {
-            if (typeof(json) === 'object' && !json.success) {
+            if (!json.success && json.error) {
                 alert(json.error);
             } else {
                 resultJson = json;
