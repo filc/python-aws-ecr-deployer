@@ -12,4 +12,4 @@ pytz==2015.4
 boto3==1.2.5
 filcutils==0.1.0
 pyyaml==3.11
-scotty==0.1.7
+git+https://github.com/huandy/python-scotty.git#egg=scotty

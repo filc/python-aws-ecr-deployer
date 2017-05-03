@@ -58,12 +58,8 @@
             });
 
             $('#btnDeploy').click(function(e){
-                $('#btnDeploy').prop('disabled', true);
-
-                postAndShowResult('/deploy', {images: selectedImages})
-                    .then(function () {
-                        $('#btnDeploy').prop('disabled', false);
-                    });
+                $('#loading-modal').modal('show');
+                postAndShowResult('/deploy', {images: selectedImages});
             });
 
         });

@@ -23,15 +23,26 @@ function fetchAuth(url, body) {
 function postAndShowResult(url, content) {
     return fetchAuth(url, content)
         .then(function(response) {
-            return response.json();
-        })
-        .then(function(json) {
-            if (!json.success && json.error) {
-                alert(json.error);
-            } else {
-                resultJson = json;
-                $('#result-modal').modal('show');
+            $('#loading-modal').modal('hide');
+
+            if (!response.ok) {
+                return alert(response.status + ': ' + response.statusText);
             }
+
+            return response.json()
+                .then(function(json) {
+                    if (!json.success && json.error) {
+                        alert(json.error);
+                    } else {
+                        resultJson = json;
+                        $('#result-modal').modal('show');
+                    }
+                })
+        })
+        .catch(function(e) {
+            $('#loading-modal').modal('hide');
+            alert(e);
+            console.log(e);
         });
 }
 

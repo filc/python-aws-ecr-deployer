@@ -44,16 +44,13 @@
                 var btn = $(this);
 
                 $('#versions-table').bootstrapTable('uncheck', btn.attr('row-idx'));
-                btn.prop('disabled', true);
+                $('#loading-modal').modal('show');
 
                 var imageToDeploy = {
                     "{{ repository }}": btn.attr('data-version')
                 };
 
-                postAndShowResult('/deploy', {images: imageToDeploy})
-                    .then(function () {
-                        btn.prop('disabled', false);
-                    });
+                postAndShowResult('/deploy', {images: imageToDeploy});
             });
 
             $('#btnRemove').click(function(e){
@@ -62,6 +59,7 @@
                 }
 
                 if (confirm('Are you sure?')) {
+                    $('#loading-modal').modal('show');
                     $('#btnRemove').prop('disabled', true);
 
                     var data = {
@@ -71,6 +69,7 @@
 
                     postAndShowResult('/delete_images', data)
                         .then(function () {
+                            $('#loading-modal').modal('hide');
                             $('#btnRemove').prop('disabled', false);
                         });
                 }
