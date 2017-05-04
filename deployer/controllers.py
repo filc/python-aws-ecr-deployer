@@ -64,7 +64,8 @@ def index():
 @_template_rendering('ecr_repository.html')
 def ecr_repository(repository):
     return {
-        'repository': repository
+        'repository': repository,
+        'services': json.dumps(g.cn.f_('core.get_services_for_image', image=repository))
     }
 
 
@@ -97,6 +98,7 @@ def status():
             'image_name': image,
             'ecs_version': str(info['ecs_version']),
             'ecr_version': info['ecr_version'],
+            'services': info.get('services') or [],
             'status_text': texts[info['result']],
             'status_class': classes[info['result']],
             'details_link': '{}/ecr-repository/{}'.format(g.cn.g_('app_config').get('base_url'), image)
@@ -143,10 +145,9 @@ def deploy():
     params = request.get_json()
     cluster = params.get('cluster') or g.cn.g_('session').get('selected_ecs_cluster')
     images = params.get('images')
+    services = params.get('services')
 
-    if not images or not cluster:
-        print(images)
-        print(cluster)
+    if not (images or services) or not cluster:
         return {'success': False, 'error': 'Missing fields...'}
 
-    return g.cn.f_('core.deploy_images', images=images, cluster=cluster)
+    return g.cn.f_('core.deploy', images=images, services=services, cluster=cluster)

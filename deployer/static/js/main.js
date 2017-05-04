@@ -1,5 +1,8 @@
 var selectedImages = {};
 var resultJson = {};
+var services = {};
+var servicesToShow = {};
+var servicesToDeploy = {};
 
 function fetchAuth(url, body) {
     var headers = {
@@ -46,7 +49,50 @@ function postAndShowResult(url, content) {
         });
 }
 
+function deployImagesFactory(images) {
+    return function() {
+        $('#services-modal .modal-body').html('');
+        servicesToShow = {};
+        servicesToDeploy = {};
+
+        _images = images || selectedImages;
+
+        for (var iName in _images) {
+            if (services[iName] && services[iName].length) {
+                $('#services-modal .modal-body').append('<h3>' + iName + '</h3>');
+                for (var service of services[iName]) {
+                    servicesToShow[service] = _images[iName];
+                    $('#services-modal .modal-body').append(
+                        '<input type="checkbox" class="service-checkbox" data="' + service + '" checked>&nbsp' + service + '</input><br />'
+                    );
+                }
+            }
+        }
+
+        $('#services-modal').modal('show');
+    }
+}
+
+function deploySelectedServices() {
+    $('#services-modal').modal('hide');
+
+    for (var item of $('.service-checkbox')) {
+        servicesToDeploy[$(item).attr('data')] = servicesToShow[$(item).attr('data')];
+    }
+
+    if (Object.keys(servicesToDeploy).length) {
+        $('#loading-modal').modal('show');
+
+        return postAndShowResult('/deploy', {services: servicesToDeploy})
+            .then(function() {
+                $('#deployer-table').bootstrapTable('refresh');
+            });
+    }
+}
+
 $(document).ready(function() {
+
+    $('#btn-service-deploy').click(deploySelectedServices);
 
     $('#versions-table').on('check.bs.table', function ($element, row) {
         selectedImages[row.digest] = row.tag;
@@ -81,7 +127,11 @@ $(document).ready(function() {
     });
 
     $('#versions-table, #deployer-table').on('load-success.bs.table', function(data) {
-       selectedImages = {};
+        selectedImages = {};
+    });
+
+    $('#deployer-table').on('refresh.bs.table', function(data) {
+        services = {};
     });
 
     $('#result-modal').on('shown.bs.modal', function (e) {

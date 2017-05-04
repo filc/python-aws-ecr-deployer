@@ -50,7 +50,7 @@ def delete_images_from_repository(cn, repository, image_digests, region='us-east
 
 def get_ecs_clusters(cn, region='us-east-1'):
     return [
-        {'clusterArn': 'arn:cluster1', 'clusterName': 'cluster1'},
-        {'clusterArn': 'arn:cluster2', 'clusterName': 'cluster2'},
+        {'clusterArn': 'arn:staging', 'clusterName': 'staging'},
+        {'clusterArn': 'arn:production', 'clusterName': 'production'},
         {'clusterArn': 'arn:cluster3', 'clusterName': 'cluster3'}
     ]

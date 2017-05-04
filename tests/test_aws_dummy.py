@@ -35,7 +35,7 @@ def test_get_s3_file(monkeypatch):
 
 def test_get_s3_file_dummy_yml(monkeypatch):
     content = aws.get_s3_file({}, bucket="", key="dummy_scotty.yml")
-    assert len(content) == 811
+    assert len(content) == 824
 
 
 def test_get_images_by_repository(monkeypatch):
@@ -53,7 +53,7 @@ def test_delete_images_from_repository():
 def test_get_ecs_clusters():
     result = aws.get_ecs_clusters({})
     assert result == [
-        {'clusterArn': 'arn:cluster1', 'clusterName': 'cluster1'},
-        {'clusterArn': 'arn:cluster2', 'clusterName': 'cluster2'},
+        {'clusterArn': 'arn:staging', 'clusterName': 'staging'},
+        {'clusterArn': 'arn:production', 'clusterName': 'production'},
         {'clusterArn': 'arn:cluster3', 'clusterName': 'cluster3'}
     ]

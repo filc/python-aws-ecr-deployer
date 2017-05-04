@@ -6,6 +6,8 @@
 
         $(document).ready(function() {
 
+            services = {'{{ repository }}': JSON.parse('{{ services|safe }}')};
+
             $('#versions-table').bootstrapTable({
                 showRefresh: true,
                 locale: 'en-US',
@@ -44,13 +46,12 @@
                 var btn = $(this);
 
                 $('#versions-table').bootstrapTable('uncheck', btn.attr('row-idx'));
-                $('#loading-modal').modal('show');
 
-                var imageToDeploy = {
+                var imagesToDeploy = {
                     "{{ repository }}": btn.attr('data-version')
                 };
 
-                postAndShowResult('/deploy', {images: imageToDeploy});
+                deployImagesFactory(imagesToDeploy)();
             });
 
             $('#btnRemove').click(function(e){

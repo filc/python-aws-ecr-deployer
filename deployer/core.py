@@ -11,6 +11,17 @@ def init_adapter(cn):
     pass
 
 
+def get_services_for_image(cn, image):
+    ''' Returns with a list the services related to the image in the config file.
+
+    :param image: name of the image/repository
+    :type ecs_cluster: str
+
+    :return list
+    '''
+    return [s[0] for s in _get_services_by_images(cn, {image: ''})]
+
+
 def get_status(cn, ecs_cluster, ecr_registry_id):
     ''' Returns with the dict of the images that are on the ecs cluster and in the ecr registry.
 
@@ -26,13 +37,24 @@ def get_status(cn, ecs_cluster, ecr_registry_id):
     ecs_images = cn.f_('aws.get_current_images_on_ecs', ecs_cluster, region=app_config.get('ecs_region'))
     ecr_images = cn.f_('aws.get_latest_images_from_ecr_registry', ecr_registry_id, region=app_config.get('ecr_region'))
 
-    return utils.compare_image_versions(ecs_images, ecr_images)
+    compared_result = utils.compare_image_versions(ecs_images, ecr_images)
+
+    for service in _get_services_by_images(cn, {iname: '' for iname, _ in ecr_images.items()}):
+        item = compared_result.get(service[2])
+
+        if not item.get('services'):
+            item['services'] = []
+
+        item['services'].append(service[0])
+
+    return compared_result
 
 
-def deploy_images(cn, images, cluster):
-    ''' Deploy the given images with given version. Returns with the list of the results of the deployment.
+def deploy(cn, cluster, images=None, services=None):
+    ''' Deploy given images or services with given version. Returns with the list of the results of the deployment.
 
     :param images: images with the versions
+    :param services: services with the versions
     :type images: dict
 
     :return list
@@ -41,13 +63,15 @@ def deploy_images(cn, images, cluster):
     def _get_real_tag(tag):
         return 'v{}'.format(tag) if re.match(r'^[0-9]$', str(tag)) else tag
 
-    # def _convert_to_int(x):
-    #     return int(re.sub("[^0-9]", "", x) if isinstance(x, str) else x)
+    _services = []
 
-    _images = {image: _get_real_tag(tag) for image, tag in images.items() if _get_real_tag(tag)}
+    if images:
+        _images = {image: _get_real_tag(tag) for image, tag in images.items() if _get_real_tag(tag)}
+        _services = _get_services_by_images(cn, _images) if _images else []
+    elif services:
+        _services = [(name, _get_real_tag(tag)) for name, tag in services.items()]
 
-    services = _get_services_by_images(cn, _images) if _images else []
-    return [_deploy_service(cn, service[0], service[1], cluster) for service in services]
+    return [_deploy_service(cn, service[0], service[1], cluster) for service in _services]
 
 
 def _deploy_service(cn, service, tag, cluster):
@@ -85,7 +109,7 @@ def _get_services_by_images(cn, images):
         for service, info in config['services'].items():
             image_name = _get_image_name_from_docker_path(info['containers'][0]['image_path'])
             if image_name in images:
-                services.append((service, images[image_name]))
+                services.append((service, images[image_name], image_name))
 
     return services
 

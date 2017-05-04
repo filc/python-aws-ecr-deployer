@@ -24,4 +24,4 @@ ecr_region = os.environ.get('DP_ECR_REGION', default_region or 'us-east-1')
 s3_region = os.environ.get('DP_S3_REGION', default_region or 'us-east-1')
 
 scotty_yml_s3_bucket = os.environ.get('DP_SCOTTY_YML_S3_BUCKET', None)
-scotty_yml_s3_key = os.environ.get('DP_SCOTTY_YML_S3_KEY', None)
+scotty_yml_s3_key = os.environ.get('DP_SCOTTY_YML_S3_KEY', 'dummy_scotty.yml')

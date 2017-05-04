@@ -10,12 +10,17 @@
                 return {classes: row.status_class};
             }
 
+            function _rowAttributes(row, index) {
+                services[row.image_name] = row.services;
+            }
+
             $('#deployer-table').bootstrapTable({
                 showRefresh: true,
                 clickToSelect: true,
                 locale: 'en-US',
                 search: true,
                 url: '{{ base_url }}/status',
+                rowAttributes: _rowAttributes,
                 columns: [
                     {
                         checkbox: true
@@ -57,10 +62,7 @@
                 ]
             });
 
-            $('#btnDeploy').click(function(e){
-                $('#loading-modal').modal('show');
-                postAndShowResult('/deploy', {images: selectedImages});
-            });
+            $('#btnDeploy').click(deployImagesFactory());
 
         });
     </script>
