@@ -4,7 +4,7 @@ ENV LC_CTYPE C.UTF-8
 
 RUN apt-get update && apt-get install -y --force-yes \
     python-software-properties \
-    git
+    git \
     curl
 
 RUN apt-get install -y --force-yes software-properties-common  && \
