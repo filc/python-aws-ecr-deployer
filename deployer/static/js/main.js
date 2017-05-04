@@ -76,7 +76,7 @@ function deployImagesFactory(images) {
 function deploySelectedServices() {
     $('#services-modal').modal('hide');
 
-    for (var item of $('.service-checkbox')) {
+    for (var item of $('.service-checkbox:checked')) {
         servicesToDeploy[$(item).attr('data')] = servicesToShow[$(item).attr('data')];
     }
 
