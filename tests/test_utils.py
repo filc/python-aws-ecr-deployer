@@ -15,11 +15,11 @@ def test_compare_image_versions():
     cases = [
         [
             {'image': ('v13', )},
-            {'image': [('v13', '')]},
+            {'image': [('v13', 's')]},
             {
                 'image': {
                     'ecr_version': 'v13',
-                    'ecs_version': 'v13',
+                    'ecs_version': 'v13::s',
                     'result': ImageStatuses.UP_TO_DATE
                 }
             }
@@ -37,44 +37,44 @@ def test_compare_image_versions():
         ],
         [
             {'image': ('v13', )},
-            {'image': [('v11', '')]},
+            {'image': [('v11', 's')]},
             {
                 'image': {
                     'ecr_version': 'v13',
-                    'ecs_version': 'v11',
+                    'ecs_version': 'v11::s',
                     'result': ImageStatuses.GREATER_IN_ECR
                 }
             }
         ],
         [
             {'image': ('v11', )},
-            {'image': [('v13', '')]},
+            {'image': [('v13', 's')]},
             {
                 'image': {
                     'ecr_version': 'v11',
-                    'ecs_version': 'v13',
+                    'ecs_version': 'v13::s',
                     'result': ImageStatuses.GREATER_IN_ECS
                 }
             }
         ],
         [
             {},
-            {'image': [('v13', '')]},
+            {'image': [('v13', 's')]},
             {
                 'image': {
                     'ecr_version': '',
-                    'ecs_version': 'v13',
+                    'ecs_version': 'v13::s',
                     'result': ImageStatuses.ONLY_IN_ECS
                 }
             }
         ],
         [
             {'image': ('v13', )},
-            {'image': [('v13', ''), ('v13', '')]},
+            {'image': [('v13', 's1'), ('v13', 's2')]},
             {
                 'image': {
                     'ecr_version': 'v13',
-                    'ecs_version': 'v13',
+                    'ecs_version': 'v13::s1,v13::s2',
                     'result': ImageStatuses.UP_TO_DATE
                 }
             }

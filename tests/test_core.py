@@ -26,7 +26,7 @@ def test_get_status(cn):
     assert set(status['second_image'].pop('services', [])) == set(['service2', 'service1'])
 
     assert status['second_image'] == {
-        'ecs_version': 'v23',
+        'ecs_version': 'v23::service_name',
         'ecr_version': 'v23',
         'result': 'UP_TO_DATE'
     }
