@@ -77,8 +77,8 @@ def test_get_current_images_on_ecs(fake_ecs_client):
     images = aws.get_current_images_on_ecs({}, 'fake_region')
 
     assert images == {
-        'first_image': ('v23', 'service_name'),
-        'second_image': ('v23', 'service_name')
+        'first_image': [('v23', 'service_name')],
+        'second_image': [('v23', 'service_name')]
     }
 
 

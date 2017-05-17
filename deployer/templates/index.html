@@ -36,7 +36,10 @@
                         field: 'ecs_version',
                         title: 'Cluster version',
                         sortable: true,
-                        cellStyle: cellFormatter
+                        cellStyle: cellFormatter,
+                        formatter: function (value, row, index) {
+                            return value.replace(/,/g, '<br />').replace(/::/g, ' - ');
+                        }
                     },
                     {
                         field: 'ecr_version',

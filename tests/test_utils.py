@@ -15,7 +15,7 @@ def test_compare_image_versions():
     cases = [
         [
             {'image': ('v13', )},
-            {'image': ('v13', '')},
+            {'image': [('v13', '')]},
             {
                 'image': {
                     'ecr_version': 'v13',
@@ -37,7 +37,7 @@ def test_compare_image_versions():
         ],
         [
             {'image': ('v13', )},
-            {'image': ('v11', '')},
+            {'image': [('v11', '')]},
             {
                 'image': {
                     'ecr_version': 'v13',
@@ -48,7 +48,7 @@ def test_compare_image_versions():
         ],
         [
             {'image': ('v11', )},
-            {'image': ('v13', '')},
+            {'image': [('v13', '')]},
             {
                 'image': {
                     'ecr_version': 'v11',
@@ -59,12 +59,45 @@ def test_compare_image_versions():
         ],
         [
             {},
-            {'image': ('v13', '')},
+            {'image': [('v13', '')]},
             {
                 'image': {
                     'ecr_version': '',
                     'ecs_version': 'v13',
                     'result': ImageStatuses.ONLY_IN_ECS
+                }
+            }
+        ],
+        [
+            {'image': ('v13', )},
+            {'image': [('v13', ''), ('v13', '')]},
+            {
+                'image': {
+                    'ecr_version': 'v13',
+                    'ecs_version': 'v13',
+                    'result': ImageStatuses.UP_TO_DATE
+                }
+            }
+        ],
+        [
+            {'image': ('v13', )},
+            {'image': [('v13', 'service_1'), ('v13', 'service_3'), ('v14', 'service_3'), ('v15', 'service_5')]},
+            {
+                'image': {
+                    'ecr_version': 'v13',
+                    'ecs_version': 'v13::service_1,v13::service_3,v14::service_3,v15::service_5',
+                    'result': ImageStatuses.MORE_VERSIONS_IN_ECS,
+                }
+            }
+        ],
+        [
+            {},
+            {'image': [('v13', 'service_1'), ('v13', 'service_3'), ('v14', 'service_3'), ('v15', 'service_5')]},
+            {
+                'image': {
+                    'ecr_version': '',
+                    'ecs_version': 'v13::service_1,v13::service_3,v14::service_3,v15::service_5',
+                    'result': ImageStatuses.ONLY_IN_ECS,
                 }
             }
         ]

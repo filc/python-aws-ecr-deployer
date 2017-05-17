@@ -35,7 +35,12 @@ def get_current_images_on_ecs(cn, cluster, region='us-east-1'):
         image_tag = last_parts[1]
         tag_parts = re.search(r'v([0-9]+)$', image_tag)
 
-        current_images.update({image_name: (image_tag, service['name'])})
+        service_data = (image_tag, service['name'])
+
+        if image_name in current_images:
+            current_images[image_name].append(service_data)
+        else:
+            current_images.update({image_name: [service_data]})
 
     return current_images
 
@@ -174,15 +179,11 @@ def _get_latest_version(images):
 
 def _get_all_services_on_ecs(client, cluster):
     services = []
-    images = []
 
     tasks = _get_tasks(client, cluster)
     for task in tasks.get('tasks', []):
         service = client.describe_task_definition(taskDefinition=task['taskDefinitionArn'])['taskDefinition']['containerDefinitions'][0]
-        if service['image'] not in images:
-            services.append(service)
-            images.append(service['image'])
-            # print(service['image'])
+        services.append(service)
 
     return services
 

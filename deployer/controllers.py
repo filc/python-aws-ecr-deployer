@@ -78,7 +78,8 @@ def status():
         ImageStatuses.GREATER_IN_ECR: 'warning',
         ImageStatuses.GREATER_IN_ECS: 'danger',
         ImageStatuses.ONLY_IN_ECS: 'danger',
-        ImageStatuses.OTHER_BRANCH_IN_ECS: 'warning'
+        ImageStatuses.OTHER_BRANCH_IN_ECS: 'warning',
+        ImageStatuses.MORE_VERSIONS_IN_ECS: 'more-versions'
     }
 
     texts = {
@@ -87,7 +88,8 @@ def status():
         ImageStatuses.GREATER_IN_ECR: 'Not the latest',
         ImageStatuses.GREATER_IN_ECS: 'What???',
         ImageStatuses.ONLY_IN_ECS: 'Only on ECS',
-        ImageStatuses.OTHER_BRANCH_IN_ECS: 'Other branch on ECS'
+        ImageStatuses.OTHER_BRANCH_IN_ECS: 'Other branch on ECS',
+        ImageStatuses.MORE_VERSIONS_IN_ECS: 'More versions on ECS'
     }
 
     config = g.cn.g_('app_config')
